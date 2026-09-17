@@ -10,6 +10,7 @@ export default class MeController {
     return {
       id: profile.id,
       displayName: profile.displayName,
+      publicCode: profile.publicCode,
       createdAt: profile.createdAt.toISOString(),
     };
   }

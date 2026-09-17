@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { CopyInviteLink } from "@/components/copy-invite-link";
+import { InvitePeopleSearch } from "@/components/invite-people-search";
 import { fetchPlayground } from "@/lib/api";
 import { formatDate, roleLabel } from "@/lib/format";
 import { getCurrentUser, requireAccessToken } from "@/lib/session";
@@ -55,6 +57,17 @@ export default async function PlaygroundPage({ params }: PlaygroundPageProps) {
           Creado el {formatDate(playground.createdAt)}
         </p>
       </div>
+
+      {playground.role === "admin" ? (
+        <section className="flex flex-col gap-4">
+          <InvitePeopleSearch playgroundId={id} />
+          {playground.inviteToken ? (
+            <CopyInviteLink token={playground.inviteToken} />
+          ) : null}
+        </section>
+      ) : playground.inviteToken ? (
+        <CopyInviteLink token={playground.inviteToken} />
+      ) : null}
 
       <section className="flex flex-col gap-3">
         <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-500">

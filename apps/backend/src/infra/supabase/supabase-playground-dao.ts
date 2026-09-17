@@ -12,6 +12,7 @@ type PlaygroundRow = {
   name: string;
   created_by: string;
   created_at: string;
+  invite_token: string;
 };
 
 type MembershipRow = {
@@ -26,12 +27,15 @@ type MemberRow = {
   profiles: { display_name: string } | { display_name: string }[] | null;
 };
 
+const playgroundColumns = "id, name, created_by, created_at, invite_token";
+
 function mapPlayground(row: PlaygroundRow): Playground {
   return {
     id: row.id,
     name: row.name,
     createdBy: row.created_by,
     createdAt: new Date(row.created_at),
+    inviteToken: row.invite_token,
   };
 }
 
@@ -48,7 +52,7 @@ export default class SupabasePlaygroundDao implements PlaygroundDao {
   async listForUser(userId: string): Promise<PlaygroundSummary[]> {
     const { data, error } = await this.supabase
       .from("playground_members")
-      .select("role, playgrounds(id, name, created_by, created_at)")
+      .select(`role, playgrounds(${playgroundColumns})`)
       .eq("user_id", userId)
       .order("joined_at", { ascending: false });
 
@@ -64,7 +68,14 @@ export default class SupabasePlaygroundDao implements PlaygroundDao {
       if (!playground) {
         continue;
       }
-      playgrounds.push({ ...mapPlayground(playground), role: row.role });
+      const mapped = mapPlayground(playground);
+      playgrounds.push({
+        id: mapped.id,
+        name: mapped.name,
+        createdBy: mapped.createdBy,
+        createdAt: mapped.createdAt,
+        role: row.role,
+      });
     }
 
     return playgrounds;
@@ -74,7 +85,7 @@ export default class SupabasePlaygroundDao implements PlaygroundDao {
     const { data, error } = await this.supabase
       .from("playgrounds")
       .insert({ name: input.name, created_by: input.createdBy })
-      .select("id, name, created_by, created_at")
+      .select(playgroundColumns)
       .single();
 
     if (error) {
@@ -87,8 +98,26 @@ export default class SupabasePlaygroundDao implements PlaygroundDao {
   async findById(id: string): Promise<Playground | null> {
     const { data, error } = await this.supabase
       .from("playgrounds")
-      .select("id, name, created_by, created_at")
+      .select(playgroundColumns)
       .eq("id", id)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data) {
+      return null;
+    }
+
+    return mapPlayground(data as PlaygroundRow);
+  }
+
+  async findByInviteToken(token: string): Promise<Playground | null> {
+    const { data, error } = await this.supabase
+      .from("playgrounds")
+      .select(playgroundColumns)
+      .eq("invite_token", token)
       .maybeSingle();
 
     if (error) {
@@ -145,5 +174,21 @@ export default class SupabasePlaygroundDao implements PlaygroundDao {
     }
 
     return members;
+  }
+
+  async addMember(
+    playgroundId: string,
+    userId: string,
+    role: PlaygroundRole,
+  ): Promise<void> {
+    const { error } = await this.supabase.from("playground_members").insert({
+      playground_id: playgroundId,
+      user_id: userId,
+      role,
+    });
+
+    if (error) {
+      throw error;
+    }
   }
 }

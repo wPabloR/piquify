@@ -21,6 +21,12 @@ export class UnauthorizedError extends HttpError {
   }
 }
 
+export class ForbiddenError extends HttpError {
+  constructor(message = "Forbidden") {
+    super(403, message);
+  }
+}
+
 export class NotFoundError extends HttpError {
   constructor(message = "Resource not found") {
     super(404, message);

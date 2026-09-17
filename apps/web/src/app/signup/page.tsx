@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signUp } from "@/app/auth/actions";
+import { safePath } from "@/lib/redirect";
 import { getAccessToken } from "@/lib/session";
 import { fieldClassName, primaryButtonClassName } from "@/lib/ui";
 
@@ -9,17 +10,20 @@ export const metadata = {
 };
 
 type SignupPageProps = {
-  searchParams: Promise<{ error?: string | string[] }>;
+  searchParams: Promise<{ error?: string | string[]; next?: string | string[] }>;
 };
 
 export default async function SignupPage({ searchParams }: SignupPageProps) {
+  const params = await searchParams;
+  const next = safePath(Array.isArray(params.next) ? params.next[0] : params.next);
   const accessToken = await getAccessToken();
   if (accessToken) {
-    redirect("/");
+    redirect(next);
   }
 
-  const params = await searchParams;
   const error = Array.isArray(params.error) ? params.error[0] : params.error;
+  const loginHref =
+    next === "/" ? "/login" : `/login?next=${encodeURIComponent(next)}`;
 
   return (
     <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-6 px-6 py-16">
@@ -32,6 +36,7 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
         <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
       ) : null}
       <form action={signUp} className="flex flex-col gap-4">
+        <input type="hidden" name="next" value={next} />
         <label className="flex flex-col gap-1 text-sm text-zinc-600 dark:text-zinc-400">
           Alias
           <input
@@ -71,7 +76,7 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
       </form>
       <p className="text-sm text-zinc-600 dark:text-zinc-400">
         ¿Ya tienes cuenta?{" "}
-        <Link className="underline" href="/login">
+        <Link className="underline" href={loginHref}>
           Entrar
         </Link>
       </p>

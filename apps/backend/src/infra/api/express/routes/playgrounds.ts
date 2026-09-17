@@ -1,5 +1,8 @@
 import express, { type Router } from "express";
-import { playgroundController } from "../../../../config/services.js";
+import {
+  invitationController,
+  playgroundController,
+} from "../../../../config/services.js";
 import { ValidationError } from "../../../../errors/http-error.js";
 import { authenticateRequest } from "../middleware/authenticate-request.js";
 
@@ -38,6 +41,38 @@ router.get("/:id", async (request, response, next) => {
     }
     response.json(
       await playgroundController.getPlayground(userId, token, playgroundId),
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/:id/invitations", async (request, response, next) => {
+  try {
+    const { userId, token } = await authenticateRequest(request);
+    const playgroundId = request.params.id;
+    const invitedUserId =
+      typeof request.body?.userId === "string" ? request.body.userId : "";
+    if (!playgroundId || !invitedUserId) {
+      throw new ValidationError("Falta el usuario a invitar");
+    }
+    await invitationController.invite(userId, token, playgroundId, invitedUserId);
+    response.status(201).json({ ok: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/:id/people", async (request, response, next) => {
+  try {
+    const { userId, token } = await authenticateRequest(request);
+    const playgroundId = request.params.id;
+    const query = typeof request.query.q === "string" ? request.query.q : "";
+    if (!playgroundId) {
+      throw new ValidationError("Falta el playground");
+    }
+    response.json(
+      await invitationController.searchProfiles(userId, token, playgroundId, query),
     );
   } catch (error) {
     next(error);

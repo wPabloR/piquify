@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createPlaygroundRequest } from "@/lib/api";
+import { createPlaygroundRequest, inviteUserRequest, searchPeople } from "@/lib/api";
 import { getAccessToken } from "@/lib/session";
 
 function field(formData: FormData, name: string) {
@@ -34,4 +34,28 @@ export async function createPlayground(formData: FormData) {
 
   revalidatePath("/", "layout");
   redirect(`/playgrounds/${playground.id}`);
+}
+
+export async function searchPeopleAction(playgroundId: string, query: string) {
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    return { error: "Inicia sesión para buscar" };
+  }
+
+  return searchPeople(accessToken, playgroundId, query);
+}
+
+export async function inviteUserAction(playgroundId: string, userId: string) {
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    return { error: "Inicia sesión para invitar" };
+  }
+
+  const result = await inviteUserRequest(accessToken, playgroundId, userId);
+  if ("error" in result) {
+    return result;
+  }
+
+  revalidatePath("/", "layout");
+  return { ok: true as const };
 }

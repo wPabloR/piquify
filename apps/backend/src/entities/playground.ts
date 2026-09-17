@@ -7,9 +7,10 @@ export type Playground = {
   name: string;
   createdBy: string;
   createdAt: Date;
+  inviteToken: string;
 };
 
-export type PlaygroundSummary = Playground & {
+export type PlaygroundSummary = Omit<Playground, "inviteToken"> & {
   role: PlaygroundRole;
 };
 
@@ -23,4 +24,10 @@ export type PlaygroundMember = {
 export type PlaygroundDetail = Playground & {
   role: PlaygroundRole;
   members: PlaygroundMember[];
+};
+
+export type PlaygroundInvite = {
+  playgroundId: string;
+  name: string;
+  alreadyMember: boolean;
 };

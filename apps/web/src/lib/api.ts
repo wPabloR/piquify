@@ -1,6 +1,7 @@
 export type MeResponse = {
   id: string;
   displayName: string;
+  publicCode: number;
   createdAt: string;
 };
 
@@ -25,7 +26,31 @@ export type PlaygroundMember = {
 };
 
 export type PlaygroundDetail = PlaygroundSummary & {
+  inviteToken?: string;
   members: PlaygroundMember[];
+};
+
+export type PlaygroundInvite = {
+  playgroundId: string;
+  name: string;
+  alreadyMember: boolean;
+};
+
+export type ProfileSearchHit = {
+  id: string;
+  displayName: string;
+  publicCode: number;
+  alreadyMember: boolean;
+  invitePending: boolean;
+};
+
+export type ReceivedInvitation = {
+  id: string;
+  playgroundId: string;
+  playgroundName: string;
+  invitedByName: string;
+  invitedByPublicCode: number;
+  createdAt: string;
 };
 
 type ApiError = { error: string };
@@ -86,9 +111,63 @@ export function fetchPlayground(accessToken: string, id: string) {
   return apiRequest<PlaygroundDetail>(`/playgrounds/${id}`, accessToken);
 }
 
+export function fetchInvite(accessToken: string, token: string) {
+  return apiRequest<PlaygroundInvite>(`/invites/${token}`, accessToken);
+}
+
+export function acceptInviteRequest(accessToken: string, token: string) {
+  return apiRequest<{ playgroundId: string }>(`/invites/${token}/accept`, accessToken, {
+    method: "POST",
+  });
+}
+
 export function createPlaygroundRequest(accessToken: string, name: string) {
   return apiRequest<Playground>("/playgrounds", accessToken, {
     method: "POST",
     body: JSON.stringify({ name }),
+  });
+}
+
+export function searchPeople(
+  accessToken: string,
+  playgroundId: string,
+  query: string,
+) {
+  return apiRequest<ProfileSearchHit[]>(
+    `/playgrounds/${playgroundId}/people?q=${encodeURIComponent(query)}`,
+    accessToken,
+  );
+}
+
+export function inviteUserRequest(
+  accessToken: string,
+  playgroundId: string,
+  userId: string,
+) {
+  return apiRequest<{ ok: true }>(
+    `/playgrounds/${playgroundId}/invitations`,
+    accessToken,
+    {
+      method: "POST",
+      body: JSON.stringify({ userId }),
+    },
+  );
+}
+
+export function fetchPendingInvitations(accessToken: string) {
+  return apiRequest<ReceivedInvitation[]>("/invitations", accessToken);
+}
+
+export function acceptInvitationRequest(accessToken: string, id: string) {
+  return apiRequest<{ playgroundId: string }>(
+    `/invitations/${id}/accept`,
+    accessToken,
+    { method: "POST" },
+  );
+}
+
+export function declineInvitationRequest(accessToken: string, id: string) {
+  return apiRequest<void>(`/invitations/${id}/decline`, accessToken, {
+    method: "POST",
   });
 }

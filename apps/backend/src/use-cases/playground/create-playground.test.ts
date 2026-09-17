@@ -23,10 +23,15 @@ class FakePlaygroundDao implements PlaygroundDao {
       name: input.name,
       createdBy: input.createdBy,
       createdAt: new Date("2026-09-17T10:00:00.000Z"),
+      inviteToken: "invite-1",
     };
   }
 
   async findById(_id: string): Promise<Playground | null> {
+    return null;
+  }
+
+  async findByInviteToken(_token: string): Promise<Playground | null> {
     return null;
   }
 
@@ -40,6 +45,12 @@ class FakePlaygroundDao implements PlaygroundDao {
   async listMembers(_playgroundId: string): Promise<PlaygroundMember[]> {
     return [];
   }
+
+  async addMember(
+    _playgroundId: string,
+    _userId: string,
+    _role: PlaygroundRole,
+  ): Promise<void> {}
 }
 
 describe("CreatePlaygroundUseCase", () => {

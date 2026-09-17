@@ -1,14 +1,20 @@
 import type {
-  Playground,
   PlaygroundDetail,
   PlaygroundSummary,
 } from "../../entities/playground.js";
 import CreatePlaygroundUseCase from "../../use-cases/playground/create-playground.js";
+import GetPlaygroundInviteUseCase from "../../use-cases/playground/get-playground-invite.js";
 import GetPlaygroundUseCase from "../../use-cases/playground/get-playground.js";
+import JoinPlaygroundUseCase from "../../use-cases/playground/join-playground.js";
 import ListPlaygroundsUseCase from "../../use-cases/playground/list-playgrounds.js";
 import type PlaygroundDao from "../../interfaces/playground/playground-dao.js";
 
-function serializePlayground(playground: Playground) {
+function serializePlayground(playground: {
+  id: string;
+  name: string;
+  createdBy: string;
+  createdAt: Date;
+}) {
   return {
     id: playground.id,
     name: playground.name,
@@ -28,6 +34,8 @@ function serializeDetail(playground: PlaygroundDetail) {
   return {
     ...serializePlayground(playground),
     role: playground.role,
+    inviteToken:
+      playground.role === "admin" ? playground.inviteToken : undefined,
     members: playground.members.map((member) => ({
       userId: member.userId,
       displayName: member.displayName,
@@ -59,5 +67,19 @@ export default class PlaygroundController {
       this.createDao(accessToken),
     ).call(userId, playgroundId);
     return serializeDetail(playground);
+  }
+
+  async getInvite(userId: string, accessToken: string, token: string) {
+    return new GetPlaygroundInviteUseCase(this.createDao(accessToken)).call(
+      userId,
+      token,
+    );
+  }
+
+  async joinPlayground(userId: string, accessToken: string, token: string) {
+    return new JoinPlaygroundUseCase(this.createDao(accessToken)).call(
+      userId,
+      token,
+    );
   }
 }

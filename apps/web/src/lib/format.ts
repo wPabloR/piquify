@@ -7,3 +7,7 @@ export function formatDate(value: string) {
 export function roleLabel(role: "admin" | "member") {
   return role === "admin" ? "Admin" : "Miembro";
 }
+
+export function formatPublicCode(code: number) {
+  return `#${code}`;
+}

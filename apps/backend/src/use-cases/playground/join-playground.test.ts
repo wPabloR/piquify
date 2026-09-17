@@ -7,7 +7,7 @@ import type {
 } from "../../entities/playground.js";
 import { NotFoundError } from "../../errors/http-error.js";
 import type PlaygroundDao from "../../interfaces/playground/playground-dao.js";
-import GetPlaygroundUseCase from "./get-playground.js";
+import JoinPlaygroundUseCase from "./join-playground.js";
 
 const playground: Playground = {
   id: "pg-1",
@@ -18,10 +18,12 @@ const playground: Playground = {
 };
 
 class FakePlaygroundDao implements PlaygroundDao {
+  public added: { playgroundId: string; userId: string; role: PlaygroundRole } | null =
+    null;
+
   constructor(
     private readonly found: Playground | null,
     private readonly role: PlaygroundRole | null,
-    private readonly members: PlaygroundMember[] = [],
   ) {}
 
   async listForUser(_userId: string): Promise<PlaygroundSummary[]> {
@@ -48,42 +50,46 @@ class FakePlaygroundDao implements PlaygroundDao {
   }
 
   async listMembers(_playgroundId: string): Promise<PlaygroundMember[]> {
-    return this.members;
+    return [];
   }
 
   async addMember(
-    _playgroundId: string,
-    _userId: string,
-    _role: PlaygroundRole,
-  ): Promise<void> {}
+    playgroundId: string,
+    userId: string,
+    role: PlaygroundRole,
+  ): Promise<void> {
+    this.added = { playgroundId, userId, role };
+  }
 }
 
-describe("GetPlaygroundUseCase", () => {
-  it("returns the playground with members and the caller role", async () => {
-    const members: PlaygroundMember[] = [
-      {
-        userId: "user-1",
-        displayName: "Ada",
-        role: "admin",
-        joinedAt: new Date("2026-09-17T10:00:00.000Z"),
-      },
-    ];
-    const useCase = new GetPlaygroundUseCase(
-      new FakePlaygroundDao(playground, "admin", members),
-    );
+describe("JoinPlaygroundUseCase", () => {
+  it("adds the caller as a member", async () => {
+    const dao = new FakePlaygroundDao(playground, null);
+    const useCase = new JoinPlaygroundUseCase(dao);
 
-    await expect(useCase.call("user-1", "pg-1")).resolves.toEqual({
-      ...playground,
-      role: "admin",
-      members,
+    await expect(useCase.call("user-2", "invite-1")).resolves.toEqual({
+      playgroundId: "pg-1",
+    });
+    expect(dao.added).toEqual({
+      playgroundId: "pg-1",
+      userId: "user-2",
+      role: "member",
     });
   });
 
-  it("hides playgrounds the caller does not belong to", async () => {
-    const useCase = new GetPlaygroundUseCase(
-      new FakePlaygroundDao(playground, null),
-    );
-    await expect(useCase.call("user-2", "pg-1")).rejects.toBeInstanceOf(
+  it("does not add a member twice", async () => {
+    const dao = new FakePlaygroundDao(playground, "member");
+    const useCase = new JoinPlaygroundUseCase(dao);
+
+    await expect(useCase.call("user-2", "invite-1")).resolves.toEqual({
+      playgroundId: "pg-1",
+    });
+    expect(dao.added).toBeNull();
+  });
+
+  it("rejects an unknown invite", async () => {
+    const useCase = new JoinPlaygroundUseCase(new FakePlaygroundDao(null, null));
+    await expect(useCase.call("user-2", "missing")).rejects.toBeInstanceOf(
       NotFoundError,
     );
   });
