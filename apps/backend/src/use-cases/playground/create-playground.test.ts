@@ -24,6 +24,7 @@ class FakePlaygroundDao implements PlaygroundDao {
       createdBy: input.createdBy,
       createdAt: new Date("2026-09-17T10:00:00.000Z"),
       inviteToken: "invite-1",
+      publicCode: 1000,
     };
   }
 
@@ -33,6 +34,10 @@ class FakePlaygroundDao implements PlaygroundDao {
 
   async findByInviteToken(_token: string): Promise<Playground | null> {
     return null;
+  }
+
+  async search(_query: string): Promise<Playground[]> {
+    return [];
   }
 
   async findMembership(

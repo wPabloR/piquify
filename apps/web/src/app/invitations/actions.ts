@@ -15,7 +15,7 @@ function field(formData: FormData, name: string) {
 export async function acceptInvitation(formData: FormData) {
   const id = field(formData, "id");
   if (!id) {
-    redirect("/invitations");
+    redirect("/notifications");
   }
 
   const accessToken = await getAccessToken();
@@ -25,7 +25,7 @@ export async function acceptInvitation(formData: FormData) {
 
   const result = await acceptInvitationRequest(accessToken, id);
   if ("error" in result) {
-    redirect(`/invitations?error=${encodeURIComponent(result.error)}`);
+    redirect(`/notifications?error=${encodeURIComponent(result.error)}`);
   }
 
   revalidatePath("/", "layout");
@@ -35,7 +35,7 @@ export async function acceptInvitation(formData: FormData) {
 export async function declineInvitation(formData: FormData) {
   const id = field(formData, "id");
   if (!id) {
-    redirect("/invitations");
+    redirect("/notifications");
   }
 
   const accessToken = await getAccessToken();
@@ -45,9 +45,9 @@ export async function declineInvitation(formData: FormData) {
 
   const result = await declineInvitationRequest(accessToken, id);
   if (result && "error" in result) {
-    redirect(`/invitations?error=${encodeURIComponent(result.error)}`);
+    redirect(`/notifications?error=${encodeURIComponent(result.error)}`);
   }
 
   revalidatePath("/", "layout");
-  redirect("/invitations");
+  redirect("/notifications");
 }

@@ -1,10 +1,12 @@
 import type { ReceivedInvitation } from "../../entities/invitation.js";
+import type { AdminJoinRequest } from "../../entities/join-request.js";
 import type InvitationDao from "../../interfaces/invitation/invitation-dao.js";
+import type JoinRequestDao from "../../interfaces/playground/join-request-dao.js";
 import type PlaygroundDao from "../../interfaces/playground/playground-dao.js";
 import type ProfileDao from "../../interfaces/user/profile-dao.js";
+import ListNotificationsUseCase from "../../use-cases/notification/list-notifications.js";
 import AcceptInvitationUseCase from "../../use-cases/invitation/accept-invitation.js";
 import DeclineInvitationUseCase from "../../use-cases/invitation/decline-invitation.js";
-import ListPendingInvitationsUseCase from "../../use-cases/invitation/list-pending-invitations.js";
 import InviteToPlaygroundUseCase from "../../use-cases/playground/invite-to-playground.js";
 import SearchProfilesUseCase from "../../use-cases/user/search-profiles.js";
 
@@ -12,6 +14,7 @@ type Daos = {
   playgrounds: PlaygroundDao;
   profiles: ProfileDao;
   invitations: InvitationDao;
+  joinRequests: JoinRequestDao;
 };
 
 function serializeReceivedInvitation(invitation: ReceivedInvitation) {
@@ -22,6 +25,18 @@ function serializeReceivedInvitation(invitation: ReceivedInvitation) {
     invitedByName: invitation.invitedByName,
     invitedByPublicCode: invitation.invitedByPublicCode,
     createdAt: invitation.createdAt.toISOString(),
+  };
+}
+
+function serializeAdminJoinRequest(request: AdminJoinRequest) {
+  return {
+    id: request.id,
+    playgroundId: request.playgroundId,
+    playgroundName: request.playgroundName,
+    userId: request.userId,
+    displayName: request.displayName,
+    publicCode: request.publicCode,
+    createdAt: request.createdAt.toISOString(),
   };
 }
 
@@ -66,10 +81,16 @@ export default class InvitationController {
 
   async listMine(userId: string, accessToken: string) {
     const daos = this.createDaos(accessToken);
-    const invitations = await new ListPendingInvitationsUseCase(
+    const inbox = await new ListNotificationsUseCase(
+      daos.playgrounds,
       daos.invitations,
+      daos.joinRequests,
     ).call(userId);
-    return invitations.map(serializeReceivedInvitation);
+
+    return {
+      invitations: inbox.invitations.map(serializeReceivedInvitation),
+      joinRequests: inbox.joinRequests.map(serializeAdminJoinRequest),
+    };
   }
 
   async accept(userId: string, accessToken: string, invitationId: string) {

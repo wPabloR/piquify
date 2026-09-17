@@ -64,6 +64,9 @@ class FakePlaygroundDao implements PlaygroundDao {
   async findByInviteToken(): Promise<Playground | null> {
     return null;
   }
+  async search(): Promise<Playground[]> {
+    return [];
+  }
   async findMembership(): Promise<PlaygroundRole | null> {
     return null;
   }

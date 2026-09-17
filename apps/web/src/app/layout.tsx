@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Navbar } from "@/components/navbar";
-import { getAccessToken, getCurrentUser, getPendingInvitations } from "@/lib/session";
+import { getAccessToken, getCurrentUser, getPendingNotifications } from "@/lib/session";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,10 +20,10 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [user, accessToken, invitations] = await Promise.all([
+  const [user, accessToken, notifications] = await Promise.all([
     getCurrentUser(),
     getAccessToken(),
-    getPendingInvitations(),
+    getPendingNotifications(),
   ]);
 
   return (
@@ -35,7 +35,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <Navbar
           signedIn={Boolean(accessToken)}
           user={user}
-          inviteCount={invitations.length}
+          notificationCount={
+            notifications.invitations.length + notifications.joinRequests.length
+          }
         />
         {children}
       </body>

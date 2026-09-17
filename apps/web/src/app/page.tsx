@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { fetchPlaygrounds } from "@/lib/api";
-import { formatDate, roleLabel } from "@/lib/format";
+import { formatDate, formatPublicCode, roleLabel } from "@/lib/format";
 import { getAccessToken, getCurrentUser } from "@/lib/session";
 import { primaryButtonClassName, secondaryButtonClassName } from "@/lib/ui";
 
@@ -59,22 +59,29 @@ export default async function Home() {
               : "Aquí están tus grupos."}
           </p>
         </div>
-        <Link className={primaryButtonClassName} href="/playgrounds/new">
-          Nuevo playground
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link className={secondaryButtonClassName} href="/playgrounds/join">
+            Buscar playground
+          </Link>
+          <Link className={primaryButtonClassName} href="/playgrounds/new">
+            Nuevo playground
+          </Link>
+        </div>
       </div>
 
       {playgrounds.length === 0 ? (
         <div className="rounded-lg border border-dashed border-zinc-300 px-6 py-12 text-center dark:border-zinc-700">
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Aún no tienes playgrounds. Crea el primero e invita a tus amigos.
+            Aún no tienes playgrounds. Crea el primero o busca uno por código.
           </p>
-          <Link
-            className={`${primaryButtonClassName} mt-4`}
-            href="/playgrounds/new"
-          >
-            Crear playground
-          </Link>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            <Link className={secondaryButtonClassName} href="/playgrounds/join">
+              Buscar playground
+            </Link>
+            <Link className={primaryButtonClassName} href="/playgrounds/new">
+              Crear playground
+            </Link>
+          </div>
         </div>
       ) : (
         <ul className="flex flex-col gap-3">
@@ -89,7 +96,8 @@ export default async function Home() {
                     {playground.name}
                   </p>
                   <p className="text-sm text-zinc-500">
-                    Creado el {formatDate(playground.createdAt)}
+                    {formatPublicCode(playground.publicCode)} · Creado el{" "}
+                    {formatDate(playground.createdAt)}
                   </p>
                 </div>
                 <span className="shrink-0 rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">

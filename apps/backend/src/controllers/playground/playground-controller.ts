@@ -1,23 +1,36 @@
 import type {
   PlaygroundDetail,
+  PlaygroundSearchHit,
   PlaygroundSummary,
 } from "../../entities/playground.js";
+import AcceptJoinRequestUseCase from "../../use-cases/playground/accept-join-request.js";
 import CreatePlaygroundUseCase from "../../use-cases/playground/create-playground.js";
+import DeclineJoinRequestUseCase from "../../use-cases/playground/decline-join-request.js";
 import GetPlaygroundInviteUseCase from "../../use-cases/playground/get-playground-invite.js";
 import GetPlaygroundUseCase from "../../use-cases/playground/get-playground.js";
 import JoinPlaygroundUseCase from "../../use-cases/playground/join-playground.js";
 import ListPlaygroundsUseCase from "../../use-cases/playground/list-playgrounds.js";
+import RequestAccessUseCase from "../../use-cases/playground/request-access.js";
+import SearchPlaygroundsUseCase from "../../use-cases/playground/search-playgrounds.js";
+import type JoinRequestDao from "../../interfaces/playground/join-request-dao.js";
 import type PlaygroundDao from "../../interfaces/playground/playground-dao.js";
+
+type Daos = {
+  playgrounds: PlaygroundDao;
+  joinRequests: JoinRequestDao;
+};
 
 function serializePlayground(playground: {
   id: string;
   name: string;
+  publicCode: number;
   createdBy: string;
   createdAt: Date;
 }) {
   return {
     id: playground.id,
     name: playground.name,
+    publicCode: playground.publicCode,
     createdBy: playground.createdBy,
     createdAt: playground.createdAt.toISOString(),
   };
@@ -27,6 +40,16 @@ function serializeSummary(playground: PlaygroundSummary) {
   return {
     ...serializePlayground(playground),
     role: playground.role,
+  };
+}
+
+function serializeSearchHit(hit: PlaygroundSearchHit) {
+  return {
+    id: hit.id,
+    name: hit.name,
+    publicCode: hit.publicCode,
+    alreadyMember: hit.alreadyMember,
+    requestPending: hit.requestPending,
   };
 }
 
@@ -42,44 +65,96 @@ function serializeDetail(playground: PlaygroundDetail) {
       role: member.role,
       joinedAt: member.joinedAt.toISOString(),
     })),
+    joinRequests:
+      playground.role === "admin"
+        ? playground.joinRequests.map((request) => ({
+            id: request.id,
+            userId: request.userId,
+            displayName: request.displayName,
+            publicCode: request.publicCode,
+            createdAt: request.createdAt.toISOString(),
+          }))
+        : [],
   };
 }
 
 export default class PlaygroundController {
-  constructor(private readonly createDao: (accessToken: string) => PlaygroundDao) {}
+  constructor(private readonly createDaos: (accessToken: string) => Daos) {}
 
   async listPlaygrounds(userId: string, accessToken: string) {
-    const playgrounds = await new ListPlaygroundsUseCase(
-      this.createDao(accessToken),
-    ).call(userId);
+    const daos = this.createDaos(accessToken);
+    const playgrounds = await new ListPlaygroundsUseCase(daos.playgrounds).call(
+      userId,
+    );
     return playgrounds.map(serializeSummary);
   }
 
   async createPlayground(userId: string, accessToken: string, name: string) {
-    const playground = await new CreatePlaygroundUseCase(
-      this.createDao(accessToken),
-    ).call(userId, name);
+    const daos = this.createDaos(accessToken);
+    const playground = await new CreatePlaygroundUseCase(daos.playgrounds).call(
+      userId,
+      name,
+    );
     return serializePlayground(playground);
   }
 
   async getPlayground(userId: string, accessToken: string, playgroundId: string) {
+    const daos = this.createDaos(accessToken);
     const playground = await new GetPlaygroundUseCase(
-      this.createDao(accessToken),
+      daos.playgrounds,
+      daos.joinRequests,
     ).call(userId, playgroundId);
     return serializeDetail(playground);
   }
 
-  async getInvite(userId: string, accessToken: string, token: string) {
-    return new GetPlaygroundInviteUseCase(this.createDao(accessToken)).call(
+  async searchPlaygrounds(userId: string, accessToken: string, query: string) {
+    const daos = this.createDaos(accessToken);
+    const hits = await new SearchPlaygroundsUseCase(
+      daos.playgrounds,
+      daos.joinRequests,
+    ).call({ actorId: userId, query });
+    return hits.map(serializeSearchHit);
+  }
+
+  async requestAccess(userId: string, accessToken: string, playgroundId: string) {
+    const daos = this.createDaos(accessToken);
+    await new RequestAccessUseCase(daos.playgrounds, daos.joinRequests).call(
       userId,
-      token,
+      playgroundId,
     );
   }
 
-  async joinPlayground(userId: string, accessToken: string, token: string) {
-    return new JoinPlaygroundUseCase(this.createDao(accessToken)).call(
+  async acceptJoinRequest(
+    userId: string,
+    accessToken: string,
+    requestId: string,
+  ) {
+    const daos = this.createDaos(accessToken);
+    await new AcceptJoinRequestUseCase(daos.playgrounds, daos.joinRequests).call(
       userId,
-      token,
+      requestId,
     );
+  }
+
+  async declineJoinRequest(
+    userId: string,
+    accessToken: string,
+    requestId: string,
+  ) {
+    const daos = this.createDaos(accessToken);
+    await new DeclineJoinRequestUseCase(daos.playgrounds, daos.joinRequests).call(
+      userId,
+      requestId,
+    );
+  }
+
+  async getInvite(userId: string, accessToken: string, token: string) {
+    const daos = this.createDaos(accessToken);
+    return new GetPlaygroundInviteUseCase(daos.playgrounds).call(userId, token);
+  }
+
+  async joinPlayground(userId: string, accessToken: string, token: string) {
+    const daos = this.createDaos(accessToken);
+    return new JoinPlaygroundUseCase(daos.playgrounds).call(userId, token);
   }
 }

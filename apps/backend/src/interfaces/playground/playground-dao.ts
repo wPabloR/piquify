@@ -10,6 +10,7 @@ export default interface PlaygroundDao {
   create(input: { name: string; createdBy: string }): Promise<Playground>;
   findById(id: string): Promise<Playground | null>;
   findByInviteToken(token: string): Promise<Playground | null>;
+  search(query: string): Promise<Playground[]>;
   findMembership(
     playgroundId: string,
     userId: string,

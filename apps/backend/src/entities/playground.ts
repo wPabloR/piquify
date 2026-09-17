@@ -5,9 +5,26 @@ export type PlaygroundRole = "admin" | "member";
 export type Playground = {
   id: string;
   name: string;
+  publicCode: number;
   createdBy: string;
   createdAt: Date;
   inviteToken: string;
+};
+
+export type PlaygroundSearchHit = {
+  id: string;
+  name: string;
+  publicCode: number;
+  alreadyMember: boolean;
+  requestPending: boolean;
+};
+
+export type PlaygroundJoinRequest = {
+  id: string;
+  userId: string;
+  displayName: string;
+  publicCode: number;
+  createdAt: Date;
 };
 
 export type PlaygroundSummary = Omit<Playground, "inviteToken"> & {
@@ -24,6 +41,7 @@ export type PlaygroundMember = {
 export type PlaygroundDetail = Playground & {
   role: PlaygroundRole;
   members: PlaygroundMember[];
+  joinRequests: PlaygroundJoinRequest[];
 };
 
 export type PlaygroundInvite = {

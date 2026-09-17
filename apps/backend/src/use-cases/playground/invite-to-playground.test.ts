@@ -23,6 +23,7 @@ const playground: Playground = {
   createdBy: "admin-1",
   createdAt: new Date("2026-09-17T10:00:00.000Z"),
   inviteToken: "invite-1",
+  publicCode: 1000,
 };
 
 const invitee: Profile = {
@@ -46,6 +47,9 @@ class FakePlaygroundDao implements PlaygroundDao {
   }
   async findByInviteToken(): Promise<Playground | null> {
     return playground;
+  }
+  async search(): Promise<Playground[]> {
+    return [];
   }
   async findMembership(
     _playgroundId: string,

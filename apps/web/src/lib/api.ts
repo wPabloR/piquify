@@ -10,6 +10,7 @@ export type PlaygroundRole = "admin" | "member";
 export type Playground = {
   id: string;
   name: string;
+  publicCode: number;
   createdBy: string;
   createdAt: string;
 };
@@ -28,6 +29,23 @@ export type PlaygroundMember = {
 export type PlaygroundDetail = PlaygroundSummary & {
   inviteToken?: string;
   members: PlaygroundMember[];
+  joinRequests: PlaygroundJoinRequest[];
+};
+
+export type PlaygroundJoinRequest = {
+  id: string;
+  userId: string;
+  displayName: string;
+  publicCode: number;
+  createdAt: string;
+};
+
+export type PlaygroundSearchHit = {
+  id: string;
+  name: string;
+  publicCode: number;
+  alreadyMember: boolean;
+  requestPending: boolean;
 };
 
 export type PlaygroundInvite = {
@@ -50,6 +68,21 @@ export type ReceivedInvitation = {
   playgroundName: string;
   invitedByName: string;
   invitedByPublicCode: number;
+  createdAt: string;
+};
+
+export type NotificationInbox = {
+  invitations: ReceivedInvitation[];
+  joinRequests: AdminJoinRequest[];
+};
+
+export type AdminJoinRequest = {
+  id: string;
+  playgroundId: string;
+  playgroundName: string;
+  userId: string;
+  displayName: string;
+  publicCode: number;
   createdAt: string;
 };
 
@@ -139,6 +172,45 @@ export function searchPeople(
   );
 }
 
+export function searchPlaygrounds(accessToken: string, query: string) {
+  return apiRequest<PlaygroundSearchHit[]>(
+    `/playgrounds/search?q=${encodeURIComponent(query)}`,
+    accessToken,
+  );
+}
+
+export function requestAccessRequest(accessToken: string, playgroundId: string) {
+  return apiRequest<{ ok: true }>(
+    `/playgrounds/${playgroundId}/join-requests`,
+    accessToken,
+    { method: "POST" },
+  );
+}
+
+export function acceptJoinRequest(
+  accessToken: string,
+  playgroundId: string,
+  requestId: string,
+) {
+  return apiRequest<void>(
+    `/playgrounds/${playgroundId}/join-requests/${requestId}/accept`,
+    accessToken,
+    { method: "POST" },
+  );
+}
+
+export function declineJoinRequest(
+  accessToken: string,
+  playgroundId: string,
+  requestId: string,
+) {
+  return apiRequest<void>(
+    `/playgrounds/${playgroundId}/join-requests/${requestId}/decline`,
+    accessToken,
+    { method: "POST" },
+  );
+}
+
 export function inviteUserRequest(
   accessToken: string,
   playgroundId: string,
@@ -154,8 +226,8 @@ export function inviteUserRequest(
   );
 }
 
-export function fetchPendingInvitations(accessToken: string) {
-  return apiRequest<ReceivedInvitation[]>("/invitations", accessToken);
+export function fetchNotifications(accessToken: string) {
+  return apiRequest<NotificationInbox>("/invitations", accessToken);
 }
 
 export function acceptInvitationRequest(accessToken: string, id: string) {

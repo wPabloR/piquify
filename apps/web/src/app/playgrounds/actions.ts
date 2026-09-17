@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createPlaygroundRequest, inviteUserRequest, searchPeople } from "@/lib/api";
+import { createPlaygroundRequest, inviteUserRequest, searchPeople, searchPlaygrounds, requestAccessRequest, acceptJoinRequest, declineJoinRequest } from "@/lib/api";
 import { getAccessToken } from "@/lib/session";
 
 function field(formData: FormData, name: string) {
@@ -58,4 +58,74 @@ export async function inviteUserAction(playgroundId: string, userId: string) {
 
   revalidatePath("/", "layout");
   return { ok: true as const };
+}
+
+export async function searchPlaygroundsAction(query: string) {
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    return { error: "Inicia sesión para buscar" };
+  }
+
+  return searchPlaygrounds(accessToken, query);
+}
+
+export async function requestAccessAction(playgroundId: string) {
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    return { error: "Inicia sesión para solicitar acceso" };
+  }
+
+  const result = await requestAccessRequest(accessToken, playgroundId);
+  if (result && "error" in result) {
+    return result;
+  }
+
+  revalidatePath("/", "layout");
+  return { ok: true as const };
+}
+
+export async function acceptJoinRequestAction(formData: FormData) {
+  const playgroundId = field(formData, "playgroundId");
+  const requestId = field(formData, "requestId");
+  const back = "/notifications";
+
+  if (!playgroundId || !requestId) {
+    redirect(back);
+  }
+
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    redirect("/login");
+  }
+
+  const result = await acceptJoinRequest(accessToken, playgroundId, requestId);
+  if (result && "error" in result) {
+    redirect(`${back}?error=${encodeURIComponent(result.error)}`);
+  }
+
+  revalidatePath("/", "layout");
+  redirect(back);
+}
+
+export async function declineJoinRequestAction(formData: FormData) {
+  const playgroundId = field(formData, "playgroundId");
+  const requestId = field(formData, "requestId");
+  const back = "/notifications";
+
+  if (!playgroundId || !requestId) {
+    redirect(back);
+  }
+
+  const accessToken = await getAccessToken();
+  if (!accessToken) {
+    redirect("/login");
+  }
+
+  const result = await declineJoinRequest(accessToken, playgroundId, requestId);
+  if (result && "error" in result) {
+    redirect(`${back}?error=${encodeURIComponent(result.error)}`);
+  }
+
+  revalidatePath("/", "layout");
+  redirect(back);
 }

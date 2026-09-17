@@ -2,20 +2,26 @@ import Link from "next/link";
 import { CopyInviteLink } from "@/components/copy-invite-link";
 import { InvitePeopleSearch } from "@/components/invite-people-search";
 import { fetchPlayground } from "@/lib/api";
-import { formatDate, roleLabel } from "@/lib/format";
+import { formatDate, formatPublicCode, roleLabel } from "@/lib/format";
 import { getCurrentUser, requireAccessToken } from "@/lib/session";
 
 type PlaygroundPageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ error?: string | string[] }>;
 };
 
-export default async function PlaygroundPage({ params }: PlaygroundPageProps) {
+export default async function PlaygroundPage({
+  params,
+  searchParams,
+}: PlaygroundPageProps) {
   const { id } = await params;
   const accessToken = await requireAccessToken();
-  const [user, playground] = await Promise.all([
+  const [user, playground, query] = await Promise.all([
     getCurrentUser(),
     fetchPlayground(accessToken, id),
+    searchParams,
   ]);
+  const error = Array.isArray(query.error) ? query.error[0] : query.error;
 
   if ("error" in playground) {
     return (
@@ -49,6 +55,9 @@ export default async function PlaygroundPage({ params }: PlaygroundPageProps) {
           <h1 className="text-3xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
             {playground.name}
           </h1>
+          <span className="text-sm text-zinc-500">
+            {formatPublicCode(playground.publicCode)}
+          </span>
           <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
             {roleLabel(playground.role)}
           </span>
@@ -57,6 +66,9 @@ export default async function PlaygroundPage({ params }: PlaygroundPageProps) {
           Creado el {formatDate(playground.createdAt)}
         </p>
       </div>
+      {error ? (
+        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+      ) : null}
 
       {playground.role === "admin" ? (
         <section className="flex flex-col gap-4">

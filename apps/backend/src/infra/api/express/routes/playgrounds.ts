@@ -32,6 +32,18 @@ router.post("/", async (request, response, next) => {
   }
 });
 
+router.get("/search", async (request, response, next) => {
+  try {
+    const { userId, token } = await authenticateRequest(request);
+    const query = typeof request.query.q === "string" ? request.query.q : "";
+    response.json(
+      await playgroundController.searchPlaygrounds(userId, token, query),
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get("/:id", async (request, response, next) => {
   try {
     const { userId, token } = await authenticateRequest(request);
@@ -74,6 +86,48 @@ router.get("/:id/people", async (request, response, next) => {
     response.json(
       await invitationController.searchProfiles(userId, token, playgroundId, query),
     );
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/:id/join-requests", async (request, response, next) => {
+  try {
+    const { userId, token } = await authenticateRequest(request);
+    const playgroundId = request.params.id;
+    if (!playgroundId) {
+      throw new ValidationError("Falta el playground");
+    }
+    await playgroundController.requestAccess(userId, token, playgroundId);
+    response.status(201).json({ ok: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/:id/join-requests/:requestId/accept", async (request, response, next) => {
+  try {
+    const { userId, token } = await authenticateRequest(request);
+    const requestId = request.params.requestId;
+    if (!requestId) {
+      throw new ValidationError("Falta la solicitud");
+    }
+    await playgroundController.acceptJoinRequest(userId, token, requestId);
+    response.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/:id/join-requests/:requestId/decline", async (request, response, next) => {
+  try {
+    const { userId, token } = await authenticateRequest(request);
+    const requestId = request.params.requestId;
+    if (!requestId) {
+      throw new ValidationError("Falta la solicitud");
+    }
+    await playgroundController.declineJoinRequest(userId, token, requestId);
+    response.status(204).end();
   } catch (error) {
     next(error);
   }

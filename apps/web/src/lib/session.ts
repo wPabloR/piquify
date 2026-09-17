@@ -2,9 +2,9 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 import {
   fetchMe,
-  fetchPendingInvitations,
+  fetchNotifications,
   type MeResponse,
-  type ReceivedInvitation,
+  type NotificationInbox,
 } from "@/lib/api";
 import { safePath } from "@/lib/redirect";
 import { createClient } from "@/lib/supabase/server";
@@ -29,19 +29,19 @@ export const getCurrentUser = cache(async (): Promise<MeResponse | null> => {
   return me;
 });
 
-export const getPendingInvitations = cache(
-  async (): Promise<ReceivedInvitation[]> => {
+export const getPendingNotifications = cache(
+  async (): Promise<NotificationInbox> => {
     const accessToken = await getAccessToken();
     if (!accessToken) {
-      return [];
+      return { invitations: [], joinRequests: [] };
     }
 
-    const invitations = await fetchPendingInvitations(accessToken);
-    if ("error" in invitations) {
-      return [];
+    const inbox = await fetchNotifications(accessToken);
+    if ("error" in inbox) {
+      return { invitations: [], joinRequests: [] };
     }
 
-    return invitations;
+    return inbox;
   },
 );
 

@@ -10,6 +10,7 @@ import type PlaygroundDao from "../../interfaces/playground/playground-dao.js";
 type PlaygroundRow = {
   id: string;
   name: string;
+  public_code: number;
   created_by: string;
   created_at: string;
   invite_token: string;
@@ -27,16 +28,21 @@ type MemberRow = {
   profiles: { display_name: string } | { display_name: string }[] | null;
 };
 
-const playgroundColumns = "id, name, created_by, created_at, invite_token";
+const playgroundColumns = "id, name, public_code, created_by, created_at, invite_token";
 
 function mapPlayground(row: PlaygroundRow): Playground {
   return {
     id: row.id,
     name: row.name,
+    publicCode: row.public_code,
     createdBy: row.created_by,
     createdAt: new Date(row.created_at),
     inviteToken: row.invite_token,
   };
+}
+
+function escapeIlike(value: string) {
+  return value.replace(/[%_\\]/g, "\\$&");
 }
 
 function asSingle<T>(value: T | T[] | null): T | null {
@@ -69,11 +75,9 @@ export default class SupabasePlaygroundDao implements PlaygroundDao {
         continue;
       }
       const mapped = mapPlayground(playground);
+      const { inviteToken: _, ...summary } = mapped;
       playgrounds.push({
-        id: mapped.id,
-        name: mapped.name,
-        createdBy: mapped.createdBy,
-        createdAt: mapped.createdAt,
+        ...summary,
         role: row.role,
       });
     }
@@ -129,6 +133,34 @@ export default class SupabasePlaygroundDao implements PlaygroundDao {
     }
 
     return mapPlayground(data as PlaygroundRow);
+  }
+
+  async search(query: string): Promise<Playground[]> {
+    const trimmed = query.trim();
+    const codeQuery = trimmed.replace(/^#/, "");
+    const isCode = /^\d+$/.test(codeQuery);
+
+    let request = this.supabase
+      .from("playgrounds")
+      .select(playgroundColumns)
+      .limit(8);
+
+    if (isCode) {
+      const width = Math.max(4, codeQuery.length);
+      const min = Number(codeQuery.padEnd(width, "0"));
+      const max = Number(codeQuery.padEnd(width, "9"));
+      request = request.gte("public_code", min).lte("public_code", max);
+    } else {
+      request = request.ilike("name", `%${escapeIlike(trimmed)}%`);
+    }
+
+    const { data, error } = await request;
+
+    if (error) {
+      throw error;
+    }
+
+    return ((data ?? []) as PlaygroundRow[]).map(mapPlayground);
   }
 
   async findMembership(

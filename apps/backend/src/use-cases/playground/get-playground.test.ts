@@ -1,17 +1,21 @@
 import { describe, expect, it } from "vitest";
+import type { JoinRequest, JoinRequestStatus } from "../../entities/join-request.js";
 import type {
   Playground,
+  PlaygroundJoinRequest,
   PlaygroundMember,
   PlaygroundRole,
   PlaygroundSummary,
 } from "../../entities/playground.js";
 import { NotFoundError } from "../../errors/http-error.js";
+import type JoinRequestDao from "../../interfaces/playground/join-request-dao.js";
 import type PlaygroundDao from "../../interfaces/playground/playground-dao.js";
 import GetPlaygroundUseCase from "./get-playground.js";
 
 const playground: Playground = {
   id: "pg-1",
   name: "La peña",
+  publicCode: 1000,
   createdBy: "user-1",
   createdAt: new Date("2026-09-17T10:00:00.000Z"),
   inviteToken: "invite-1",
@@ -40,6 +44,10 @@ class FakePlaygroundDao implements PlaygroundDao {
     return this.found;
   }
 
+  async search(_query: string): Promise<Playground[]> {
+    return [];
+  }
+
   async findMembership(
     _playgroundId: string,
     _userId: string,
@@ -58,6 +66,30 @@ class FakePlaygroundDao implements PlaygroundDao {
   ): Promise<void> {}
 }
 
+class FakeJoinRequestDao implements JoinRequestDao {
+  constructor(private readonly pending: PlaygroundJoinRequest[] = []) {}
+
+  async findById(): Promise<JoinRequest | null> {
+    return null;
+  }
+  async findForPlaygroundUser(): Promise<JoinRequest | null> {
+    return null;
+  }
+  async listPendingPlaygroundIds(): Promise<string[]> {
+    return [];
+  }
+  async listPendingForPlayground(): Promise<PlaygroundJoinRequest[]> {
+    return this.pending;
+  }
+  async listPendingForPlaygrounds(): Promise<never[]> {
+    return [];
+  }
+  async create(): Promise<JoinRequest> {
+    throw new Error("not implemented");
+  }
+  async updateStatus(_id: string, _status: JoinRequestStatus): Promise<void> {}
+}
+
 describe("GetPlaygroundUseCase", () => {
   it("returns the playground with members and the caller role", async () => {
     const members: PlaygroundMember[] = [
@@ -70,18 +102,21 @@ describe("GetPlaygroundUseCase", () => {
     ];
     const useCase = new GetPlaygroundUseCase(
       new FakePlaygroundDao(playground, "admin", members),
+      new FakeJoinRequestDao(),
     );
 
     await expect(useCase.call("user-1", "pg-1")).resolves.toEqual({
       ...playground,
       role: "admin",
       members,
+      joinRequests: [],
     });
   });
 
   it("hides playgrounds the caller does not belong to", async () => {
     const useCase = new GetPlaygroundUseCase(
       new FakePlaygroundDao(playground, null),
+      new FakeJoinRequestDao(),
     );
     await expect(useCase.call("user-2", "pg-1")).rejects.toBeInstanceOf(
       NotFoundError,
