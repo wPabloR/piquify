@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Navbar } from "@/components/navbar";
+import { getAccessToken, getCurrentUser } from "@/lib/session";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,13 +19,21 @@ export const metadata: Metadata = {
   description: "Porras entre amigos",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const [user, accessToken] = await Promise.all([
+    getCurrentUser(),
+    getAccessToken(),
+  ]);
+
   return (
     <html
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col bg-zinc-50 font-sans dark:bg-black">
+        <Navbar signedIn={Boolean(accessToken)} user={user} />
+        {children}
+      </body>
     </html>
   );
 }

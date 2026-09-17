@@ -16,11 +16,7 @@ export function createAuthClient(): SupabaseClient {
 export function createUserClient(accessToken: string): SupabaseClient {
   const { url, publishableKey } = getSupabaseEnv();
   return createClient(url, publishableKey, {
-    global: {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    },
+    accessToken: async () => accessToken,
     auth: authOptions,
   });
 }
