@@ -31,7 +31,7 @@ export default async function NewPlaygroundPage({
           Nuevo playground
         </h1>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Un espacio para las porras del grupo. Tú serás admin.
+          Un espacio para los piques del grupo. Tú serás admin.
         </p>
       </div>
       {error ? (

@@ -57,8 +57,8 @@ export default async function InvitePage({
           {invite.name}
         </h1>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Te han invitado a este playground. Únete para ver a los miembros y las
-          porras.
+          Te han invitado a este playground. Únete para ver a los miembros y los
+          piques.
         </p>
       </div>
       {error ? (

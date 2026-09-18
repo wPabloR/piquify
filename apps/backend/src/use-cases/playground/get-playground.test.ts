@@ -10,6 +10,8 @@ import type {
 import { NotFoundError } from "../../errors/http-error.js";
 import type JoinRequestDao from "../../interfaces/playground/join-request-dao.js";
 import type PlaygroundDao from "../../interfaces/playground/playground-dao.js";
+import type { Bet, BetSummary } from "../../entities/bet.js";
+import type BetDao from "../../interfaces/bet/bet-dao.js";
 import GetPlaygroundUseCase from "./get-playground.js";
 
 const playground: Playground = {
@@ -90,6 +92,51 @@ class FakeJoinRequestDao implements JoinRequestDao {
   async updateStatus(_id: string, _status: JoinRequestStatus): Promise<void> {}
 }
 
+class FakeBetDao implements BetDao {
+  constructor(private readonly bets: BetSummary[] = []) {}
+
+  async create(): Promise<Bet> {
+    throw new Error("not implemented");
+  }
+  async findById(): Promise<Bet | null> {
+    return null;
+  }
+  async listForPlayground(): Promise<BetSummary[]> {
+    return this.bets;
+  }
+  async lockExpired(): Promise<void> {}
+  async setResult(): Promise<Bet> {
+    throw new Error("not implemented");
+  }
+  async setStatus(): Promise<void> {}
+  async listParticipants() {
+    return [];
+  }
+  async addParticipant(): Promise<void> {}
+  async removeParticipant(): Promise<void> {}
+  async isSettled(): Promise<boolean> {
+    return false;
+  }
+  async markSettled(): Promise<void> {}
+  async saveResidual(): Promise<void> {}
+  async proposeResult(): Promise<Bet> {
+    throw new Error("not implemented");
+  }
+  async listVotes() {
+    return [];
+  }
+  async upsertVote(): Promise<void> {}
+  async listLockedAwaitingResult() {
+    return [];
+  }
+  async listPendingResultVotesForUser() {
+    return [];
+  }
+  async listExpiredPendingResults() {
+    return [];
+  }
+}
+
 describe("GetPlaygroundUseCase", () => {
   it("returns the playground with members and the caller role", async () => {
     const members: PlaygroundMember[] = [
@@ -103,6 +150,7 @@ describe("GetPlaygroundUseCase", () => {
     const useCase = new GetPlaygroundUseCase(
       new FakePlaygroundDao(playground, "admin", members),
       new FakeJoinRequestDao(),
+      new FakeBetDao(),
     );
 
     await expect(useCase.call("user-1", "pg-1")).resolves.toEqual({
@@ -110,6 +158,7 @@ describe("GetPlaygroundUseCase", () => {
       role: "admin",
       members,
       joinRequests: [],
+      bets: [],
     });
   });
 
@@ -117,6 +166,7 @@ describe("GetPlaygroundUseCase", () => {
     const useCase = new GetPlaygroundUseCase(
       new FakePlaygroundDao(playground, null),
       new FakeJoinRequestDao(),
+      new FakeBetDao(),
     );
     await expect(useCase.call("user-2", "pg-1")).rejects.toBeInstanceOf(
       NotFoundError,

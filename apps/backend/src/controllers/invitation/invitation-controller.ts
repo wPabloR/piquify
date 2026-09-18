@@ -1,5 +1,10 @@
 import type { ReceivedInvitation } from "../../entities/invitation.js";
 import type { AdminJoinRequest } from "../../entities/join-request.js";
+import type {
+  ResultDueNotification,
+  ResultVoteNotification,
+} from "../../entities/bet.js";
+import type BetDao from "../../interfaces/bet/bet-dao.js";
 import type InvitationDao from "../../interfaces/invitation/invitation-dao.js";
 import type JoinRequestDao from "../../interfaces/playground/join-request-dao.js";
 import type PlaygroundDao from "../../interfaces/playground/playground-dao.js";
@@ -15,6 +20,7 @@ type Daos = {
   profiles: ProfileDao;
   invitations: InvitationDao;
   joinRequests: JoinRequestDao;
+  bets: BetDao;
 };
 
 function serializeReceivedInvitation(invitation: ReceivedInvitation) {
@@ -37,6 +43,27 @@ function serializeAdminJoinRequest(request: AdminJoinRequest) {
     displayName: request.displayName,
     publicCode: request.publicCode,
     createdAt: request.createdAt.toISOString(),
+  };
+}
+
+function serializeResultDue(item: ResultDueNotification) {
+  return {
+    betId: item.betId,
+    playgroundId: item.playgroundId,
+    playgroundName: item.playgroundName,
+    title: item.title,
+    deadline: item.deadline.toISOString(),
+  };
+}
+
+function serializeResultVote(item: ResultVoteNotification) {
+  return {
+    betId: item.betId,
+    playgroundId: item.playgroundId,
+    playgroundName: item.playgroundName,
+    title: item.title,
+    voteClosesAt: item.voteClosesAt.toISOString(),
+    proposedOptionLabel: item.proposedOptionLabel,
   };
 }
 
@@ -85,11 +112,15 @@ export default class InvitationController {
       daos.playgrounds,
       daos.invitations,
       daos.joinRequests,
+      daos.bets,
+      daos.profiles,
     ).call(userId);
 
     return {
       invitations: inbox.invitations.map(serializeReceivedInvitation),
       joinRequests: inbox.joinRequests.map(serializeAdminJoinRequest),
+      resultDue: inbox.resultDue.map(serializeResultDue),
+      resultVotes: inbox.resultVotes.map(serializeResultVote),
     };
   }
 

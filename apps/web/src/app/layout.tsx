@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Piquify",
-  description: "Porras entre amigos",
+  description: "Piques entre amigos",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -36,7 +36,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           signedIn={Boolean(accessToken)}
           user={user}
           notificationCount={
-            notifications.invitations.length + notifications.joinRequests.length
+            notifications.invitations.length +
+            notifications.joinRequests.length +
+            notifications.resultDue.length +
+            notifications.resultVotes.length
           }
         />
         {children}

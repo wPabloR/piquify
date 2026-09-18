@@ -11,10 +11,10 @@ export default async function Home() {
     return (
       <main className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center gap-4 px-6 py-16">
         <h1 className="text-3xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
-          Porras entre amigos
+          Piques entre amigos
         </h1>
         <p className="text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-          El playground es el espacio; las apuestas son opt-in.
+          El playground es el espacio; los piques son opt-in.
         </p>
         <div className="flex gap-3">
           <Link className={primaryButtonClassName} href="/login">

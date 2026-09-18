@@ -11,6 +11,7 @@ export default class MeController {
       id: profile.id,
       displayName: profile.displayName,
       publicCode: profile.publicCode,
+      balance: profile.balance,
       createdAt: profile.createdAt.toISOString(),
     };
   }

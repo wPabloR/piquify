@@ -1,9 +1,11 @@
 import HealthController from "../controllers/health/health-controller.js";
+import BetController from "../controllers/bet/bet-controller.js";
 import InvitationController from "../controllers/invitation/invitation-controller.js";
 import PlaygroundController from "../controllers/playground/playground-controller.js";
 import MeController from "../controllers/user/me-controller.js";
 import { createAuthClient, createUserClient } from "../infra/supabase/client.js";
 import SupabaseAuthTokenVerifier from "../infra/supabase/supabase-auth-token-verifier.js";
+import SupabaseBetDao from "../infra/supabase/supabase-bet-dao.js";
 import SupabaseInvitationDao from "../infra/supabase/supabase-invitation-dao.js";
 import SupabaseJoinRequestDao from "../infra/supabase/supabase-join-request-dao.js";
 import SupabasePlaygroundDao from "../infra/supabase/supabase-playground-dao.js";
@@ -34,6 +36,16 @@ export const playgroundController = new PlaygroundController((accessToken) => {
   return {
     playgrounds: new SupabasePlaygroundDao(supabase),
     joinRequests: new SupabaseJoinRequestDao(supabase),
+    bets: new SupabaseBetDao(supabase),
+  };
+});
+
+export const betController = new BetController((accessToken) => {
+  const supabase = createUserClient(accessToken);
+  return {
+    playgrounds: new SupabasePlaygroundDao(supabase),
+    bets: new SupabaseBetDao(supabase),
+    profiles: new SupabaseProfileDao(supabase),
   };
 });
 
@@ -44,5 +56,6 @@ export const invitationController = new InvitationController((accessToken) => {
     profiles: new SupabaseProfileDao(supabase),
     invitations: new SupabaseInvitationDao(supabase),
     joinRequests: new SupabaseJoinRequestDao(supabase),
+    bets: new SupabaseBetDao(supabase),
   };
 });

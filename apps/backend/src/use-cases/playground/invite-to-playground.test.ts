@@ -30,6 +30,7 @@ const invitee: Profile = {
   id: "user-2",
   displayName: "Ada",
   publicCode: 4585,
+  balance: 200,
   createdAt: new Date("2026-09-17T10:00:00.000Z"),
 };
 
@@ -73,6 +74,14 @@ class FakeProfileDao implements ProfileDao {
   async search(): Promise<Profile[]> {
     return [];
   }
+  async tryDebit(): Promise<boolean> {
+    return false;
+  }
+  async credit(): Promise<void> {}
+  async hasMovement(): Promise<boolean> {
+    return false;
+  }
+  async appendMovement(): Promise<void> {}
 }
 
 class FakeInvitationDao implements InvitationDao {

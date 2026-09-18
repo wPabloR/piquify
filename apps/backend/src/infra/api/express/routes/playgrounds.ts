@@ -1,5 +1,6 @@
 import express, { type Router } from "express";
 import {
+  betController,
   invitationController,
   playgroundController,
 } from "../../../../config/services.js";
@@ -128,6 +129,143 @@ router.post("/:id/join-requests/:requestId/decline", async (request, response, n
     }
     await playgroundController.declineJoinRequest(userId, token, requestId);
     response.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/:id/bets", async (request, response, next) => {
+  try {
+    const { userId, token } = await authenticateRequest(request);
+    const playgroundId = request.params.id;
+    if (!playgroundId) {
+      throw new ValidationError("Falta el playground");
+    }
+    const title = typeof request.body?.title === "string" ? request.body.title : "";
+    const stake = request.body?.stake;
+    const deadline =
+      typeof request.body?.deadline === "string" ? request.body.deadline : "";
+    const options = Array.isArray(request.body?.options)
+      ? request.body.options.filter((option: unknown) => typeof option === "string")
+      : [];
+    if (typeof stake !== "number") {
+      throw new ValidationError("La apuesta debe ser un número");
+    }
+    if (!deadline) {
+      throw new ValidationError("La fecha límite es obligatoria");
+    }
+    response.status(201).json(
+      await betController.createBet(userId, token, playgroundId, {
+        title,
+        stake,
+        deadline,
+        options,
+      }),
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/:id/bets/:betId", async (request, response, next) => {
+  try {
+    const { userId, token } = await authenticateRequest(request);
+    const playgroundId = request.params.id;
+    const betId = request.params.betId;
+    if (!playgroundId || !betId) {
+      throw new ValidationError("Falta el pique");
+    }
+    response.json(await betController.getBet(userId, token, playgroundId, betId));
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/:id/bets/:betId/result", async (request, response, next) => {
+  try {
+    const { userId, token } = await authenticateRequest(request);
+    const playgroundId = request.params.id;
+    const betId = request.params.betId;
+    const optionId =
+      typeof request.body?.optionId === "string" ? request.body.optionId : "";
+    if (!playgroundId || !betId) {
+      throw new ValidationError("Falta el pique");
+    }
+    if (!optionId) {
+      throw new ValidationError("Falta la opción ganadora");
+    }
+    response.json(
+      await betController.setResult(userId, token, playgroundId, betId, optionId),
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/:id/bets/:betId/vote", async (request, response, next) => {
+  try {
+    const { userId, token } = await authenticateRequest(request);
+    const playgroundId = request.params.id;
+    const betId = request.params.betId;
+    const choice =
+      request.body?.choice === "confirm" || request.body?.choice === "reject"
+        ? request.body.choice
+        : "";
+    const suggestedOptionId =
+      typeof request.body?.suggestedOptionId === "string"
+        ? request.body.suggestedOptionId
+        : null;
+    if (!playgroundId || !betId) {
+      throw new ValidationError("Falta el pique");
+    }
+    if (!choice) {
+      throw new ValidationError("Falta el voto");
+    }
+    response.json(
+      await betController.voteResult(
+        userId,
+        token,
+        playgroundId,
+        betId,
+        choice,
+        suggestedOptionId,
+      ),
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/:id/bets/:betId/join", async (request, response, next) => {
+  try {
+    const { userId, token } = await authenticateRequest(request);
+    const playgroundId = request.params.id;
+    const betId = request.params.betId;
+    const optionId =
+      typeof request.body?.optionId === "string" ? request.body.optionId : "";
+    if (!playgroundId || !betId) {
+      throw new ValidationError("Falta el pique");
+    }
+    if (!optionId) {
+      throw new ValidationError("Falta la opción");
+    }
+    response.json(
+      await betController.joinBet(userId, token, playgroundId, betId, optionId),
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/:id/bets/:betId/leave", async (request, response, next) => {
+  try {
+    const { userId, token } = await authenticateRequest(request);
+    const playgroundId = request.params.id;
+    const betId = request.params.betId;
+    if (!playgroundId || !betId) {
+      throw new ValidationError("Falta el pique");
+    }
+    response.json(await betController.leaveBet(userId, token, playgroundId, betId));
   } catch (error) {
     next(error);
   }

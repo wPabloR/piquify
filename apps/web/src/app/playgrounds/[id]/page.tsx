@@ -2,8 +2,9 @@ import Link from "next/link";
 import { CopyInviteLink } from "@/components/copy-invite-link";
 import { InvitePeopleSearch } from "@/components/invite-people-search";
 import { fetchPlayground } from "@/lib/api";
-import { formatDate, formatPublicCode, roleLabel } from "@/lib/format";
+import { formatDate, formatDateTime, formatPublicCode, formatStake, betStatusLabel, roleLabel } from "@/lib/format";
 import { getCurrentUser, requireAccessToken } from "@/lib/session";
+import { primaryButtonClassName } from "@/lib/ui";
 
 type PlaygroundPageProps = {
   params: Promise<{ id: string }>;
@@ -69,6 +70,48 @@ export default async function PlaygroundPage({
       {error ? (
         <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
       ) : null}
+
+      <section className="flex flex-col gap-3">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-500">
+            Piques
+          </h2>
+          {playground.role === "admin" ? (
+            <Link className={primaryButtonClassName} href={`/playgrounds/${id}/bets/new`}>
+              Nuevo pique
+            </Link>
+          ) : null}
+        </div>
+        {!(playground.bets ?? []).length ? (
+          <p className="rounded-lg border border-dashed border-zinc-300 px-6 py-10 text-center text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+            Aún no hay piques en este playground.
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-3">
+            {(playground.bets ?? []).map((bet) => (
+              <li key={bet.id}>
+                <Link
+                  href={`/playgrounds/${id}/bets/${bet.id}`}
+                  className="flex items-center justify-between gap-4 rounded-lg border border-zinc-200 bg-white px-4 py-4 transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-600"
+                >
+                  <div className="flex min-w-0 flex-col gap-1">
+                    <p className="truncate font-medium text-zinc-950 dark:text-zinc-50">
+                      {bet.title}
+                    </p>
+                    <p className="text-sm text-zinc-500">
+                      {formatStake(bet.stake)} · Cierra el{" "}
+                      {formatDateTime(bet.deadline)}
+                    </p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                    {betStatusLabel(bet.status)}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       {playground.role === "admin" ? (
         <section className="flex flex-col gap-4">

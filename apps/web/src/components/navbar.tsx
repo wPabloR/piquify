@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { signOut } from "@/app/auth/actions";
 import { NotificationBell } from "@/components/notification-bell";
-import { formatPublicCode } from "@/lib/format";
+import { formatPublicCode, formatStake } from "@/lib/format";
 import { primaryButtonClassName } from "@/lib/ui";
 import type { MeResponse } from "@/lib/api";
 
@@ -46,12 +46,17 @@ export function Navbar({ user, signedIn, notificationCount }: NavbarProps) {
                 Nuevo playground
               </Link>
               {user ? (
-                <span className="hidden text-zinc-600 sm:inline dark:text-zinc-400">
-                  {user.displayName}{" "}
-                  <span className="text-zinc-400 dark:text-zinc-500">
-                    {formatPublicCode(user.publicCode)}
+                <>
+                  <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                    {formatStake(user.balance)}
                   </span>
-                </span>
+                  <span className="hidden text-zinc-600 sm:inline dark:text-zinc-400">
+                    {user.displayName}{" "}
+                    <span className="text-zinc-400 dark:text-zinc-500">
+                      {formatPublicCode(user.publicCode)}
+                    </span>
+                  </span>
+                </>
               ) : null}
               <form action={signOut}>
                 <button

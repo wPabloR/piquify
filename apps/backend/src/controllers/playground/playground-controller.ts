@@ -14,10 +14,13 @@ import RequestAccessUseCase from "../../use-cases/playground/request-access.js";
 import SearchPlaygroundsUseCase from "../../use-cases/playground/search-playgrounds.js";
 import type JoinRequestDao from "../../interfaces/playground/join-request-dao.js";
 import type PlaygroundDao from "../../interfaces/playground/playground-dao.js";
+import type BetDao from "../../interfaces/bet/bet-dao.js";
+import { serializeBetSummary } from "../bet/bet-controller.js";
 
 type Daos = {
   playgrounds: PlaygroundDao;
   joinRequests: JoinRequestDao;
+  bets: BetDao;
 };
 
 function serializePlayground(playground: {
@@ -75,6 +78,7 @@ function serializeDetail(playground: PlaygroundDetail) {
             createdAt: request.createdAt.toISOString(),
           }))
         : [],
+    bets: playground.bets.map(serializeBetSummary),
   };
 }
 
@@ -103,6 +107,7 @@ export default class PlaygroundController {
     const playground = await new GetPlaygroundUseCase(
       daos.playgrounds,
       daos.joinRequests,
+      daos.bets,
     ).call(userId, playgroundId);
     return serializeDetail(playground);
   }

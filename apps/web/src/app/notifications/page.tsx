@@ -7,7 +7,7 @@ import {
   acceptJoinRequestAction,
   declineJoinRequestAction,
 } from "@/app/playgrounds/actions";
-import { formatDate, formatPublicCode } from "@/lib/format";
+import { formatDate, formatDateTime, formatPublicCode } from "@/lib/format";
 import { getPendingNotifications, requireAccessToken } from "@/lib/session";
 import { primaryButtonClassName, secondaryButtonClassName } from "@/lib/ui";
 
@@ -29,7 +29,10 @@ export default async function NotificationsPage({
   ]);
   const error = Array.isArray(params.error) ? params.error[0] : params.error;
   const empty =
-    inbox.invitations.length === 0 && inbox.joinRequests.length === 0;
+    inbox.invitations.length === 0 &&
+    inbox.joinRequests.length === 0 &&
+    inbox.resultDue.length === 0 &&
+    inbox.resultVotes.length === 0;
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-10">
@@ -44,7 +47,7 @@ export default async function NotificationsPage({
           Notificaciones
         </h1>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Invitaciones a playgrounds y solicitudes de acceso.
+          Invitaciones, solicitudes de acceso y avisos de piques.
         </p>
       </div>
       {error ? (
@@ -178,6 +181,87 @@ export default async function NotificationsPage({
                         </button>
                       </form>
                     </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
+          {inbox.resultDue.length > 0 ? (
+            <section className="flex flex-col gap-3">
+              <div className="flex flex-col gap-1">
+                <h2 className="text-lg font-semibold text-zinc-950 dark:text-zinc-50">
+                  Resultado pendiente
+                </h2>
+                <p className="text-sm text-zinc-500">
+                  El plazo de un pique ha cerrado. Propón el resultado.
+                </p>
+              </div>
+              <ul className="flex flex-col gap-3">
+                {inbox.resultDue.map((item) => (
+                  <li
+                    key={item.betId}
+                    className="flex flex-col gap-4 rounded-lg border border-violet-200 bg-violet-50 px-4 py-4 sm:flex-row sm:items-center sm:justify-between dark:border-violet-900 dark:bg-violet-950/40"
+                  >
+                    <div className="flex min-w-0 flex-col gap-2">
+                      <span className="w-fit rounded-full bg-violet-700 px-2.5 py-0.5 text-xs font-semibold text-white">
+                        Resultado pendiente
+                      </span>
+                      <p className="font-medium text-zinc-950 dark:text-zinc-50">
+                        {item.title}
+                      </p>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                        {item.playgroundName} · Cerró el{" "}
+                        {formatDateTime(item.deadline)}
+                      </p>
+                    </div>
+                    <Link
+                      className={primaryButtonClassName}
+                      href={`/playgrounds/${item.playgroundId}/bets/${item.betId}`}
+                    >
+                      Poner resultado
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
+          {inbox.resultVotes.length > 0 ? (
+            <section className="flex flex-col gap-3">
+              <div className="flex flex-col gap-1">
+                <h2 className="text-lg font-semibold text-zinc-950 dark:text-zinc-50">
+                  Validar resultado
+                </h2>
+                <p className="text-sm text-zinc-500">
+                  Un admin ha propuesto el ganador. Confirma o rechaza.
+                </p>
+              </div>
+              <ul className="flex flex-col gap-3">
+                {inbox.resultVotes.map((item) => (
+                  <li
+                    key={item.betId}
+                    className="flex flex-col gap-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-4 sm:flex-row sm:items-center sm:justify-between dark:border-emerald-900 dark:bg-emerald-950/40"
+                  >
+                    <div className="flex min-w-0 flex-col gap-2">
+                      <span className="w-fit rounded-full bg-emerald-700 px-2.5 py-0.5 text-xs font-semibold text-white">
+                        Validar resultado
+                      </span>
+                      <p className="font-medium text-zinc-950 dark:text-zinc-50">
+                        {item.title}
+                      </p>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                        {item.playgroundName} · Propuesta:{" "}
+                        {item.proposedOptionLabel} · Hasta el{" "}
+                        {formatDateTime(item.voteClosesAt)}
+                      </p>
+                    </div>
+                    <Link
+                      className={primaryButtonClassName}
+                      href={`/playgrounds/${item.playgroundId}/bets/${item.betId}`}
+                    >
+                      Validar
+                    </Link>
                   </li>
                 ))}
               </ul>

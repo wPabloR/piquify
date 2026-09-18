@@ -2,6 +2,7 @@ export type MeResponse = {
   id: string;
   displayName: string;
   publicCode: number;
+  balance: number;
   createdAt: string;
 };
 
@@ -30,6 +31,54 @@ export type PlaygroundDetail = PlaygroundSummary & {
   inviteToken?: string;
   members: PlaygroundMember[];
   joinRequests: PlaygroundJoinRequest[];
+  bets: BetSummary[];
+};
+
+export type BetStatus =
+  | "open"
+  | "locked"
+  | "pending_result"
+  | "resolved"
+  | "cancelled";
+
+export type BetOption = {
+  id: string;
+  label: string;
+  position: number;
+};
+
+export type BetSummary = {
+  id: string;
+  playgroundId: string;
+  title: string;
+  stake: number;
+  deadline: string;
+  status: BetStatus;
+  winningOptionId: string | null;
+  voteClosesAt: string | null;
+  createdBy: string;
+  createdAt: string;
+};
+
+export type ResultVoteChoice = "confirm" | "reject";
+
+export type BetDetail = BetSummary & {
+  options: BetOption[];
+  myOptionId: string | null;
+  participantCount: number;
+  payout: BetPayout | null;
+  myVote: ResultVoteChoice | null;
+  confirmedCount: number;
+  rejectedCount: number;
+  pendingVoteCount: number;
+};
+
+export type BetPayout = {
+  pot: number;
+  winnerCount: number;
+  share: number;
+  residual: number;
+  refund: number;
 };
 
 export type PlaygroundJoinRequest = {
@@ -71,9 +120,28 @@ export type ReceivedInvitation = {
   createdAt: string;
 };
 
+export type ResultDueNotification = {
+  betId: string;
+  playgroundId: string;
+  playgroundName: string;
+  title: string;
+  deadline: string;
+};
+
+export type ResultVoteNotification = {
+  betId: string;
+  playgroundId: string;
+  playgroundName: string;
+  title: string;
+  voteClosesAt: string;
+  proposedOptionLabel: string;
+};
+
 export type NotificationInbox = {
   invitations: ReceivedInvitation[];
   joinRequests: AdminJoinRequest[];
+  resultDue: ResultDueNotification[];
+  resultVotes: ResultVoteNotification[];
 };
 
 export type AdminJoinRequest = {
@@ -142,6 +210,90 @@ export function fetchPlaygrounds(accessToken: string) {
 
 export function fetchPlayground(accessToken: string, id: string) {
   return apiRequest<PlaygroundDetail>(`/playgrounds/${id}`, accessToken);
+}
+
+export function fetchBet(accessToken: string, playgroundId: string, betId: string) {
+  return apiRequest<BetDetail>(
+    `/playgrounds/${playgroundId}/bets/${betId}`,
+    accessToken,
+  );
+}
+
+export function createBetRequest(
+  accessToken: string,
+  playgroundId: string,
+  input: {
+    title: string;
+    stake: number;
+    deadline: string;
+    options: string[];
+  },
+) {
+  return apiRequest<BetDetail>(`/playgrounds/${playgroundId}/bets`, accessToken, {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export function setBetResultRequest(
+  accessToken: string,
+  playgroundId: string,
+  betId: string,
+  optionId: string,
+) {
+  return apiRequest<BetDetail>(
+    `/playgrounds/${playgroundId}/bets/${betId}/result`,
+    accessToken,
+    {
+      method: "POST",
+      body: JSON.stringify({ optionId }),
+    },
+  );
+}
+
+export function voteBetResultRequest(
+  accessToken: string,
+  playgroundId: string,
+  betId: string,
+  choice: ResultVoteChoice,
+  suggestedOptionId?: string,
+) {
+  return apiRequest<BetDetail>(
+    `/playgrounds/${playgroundId}/bets/${betId}/vote`,
+    accessToken,
+    {
+      method: "POST",
+      body: JSON.stringify({ choice, suggestedOptionId }),
+    },
+  );
+}
+
+export function joinBetRequest(
+  accessToken: string,
+  playgroundId: string,
+  betId: string,
+  optionId: string,
+) {
+  return apiRequest<BetDetail>(
+    `/playgrounds/${playgroundId}/bets/${betId}/join`,
+    accessToken,
+    {
+      method: "POST",
+      body: JSON.stringify({ optionId }),
+    },
+  );
+}
+
+export function leaveBetRequest(
+  accessToken: string,
+  playgroundId: string,
+  betId: string,
+) {
+  return apiRequest<BetDetail>(
+    `/playgrounds/${playgroundId}/bets/${betId}/leave`,
+    accessToken,
+    { method: "POST" },
+  );
 }
 
 export function fetchInvite(accessToken: string, token: string) {

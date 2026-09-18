@@ -33,15 +33,20 @@ export const getPendingNotifications = cache(
   async (): Promise<NotificationInbox> => {
     const accessToken = await getAccessToken();
     if (!accessToken) {
-      return { invitations: [], joinRequests: [] };
+      return { invitations: [], joinRequests: [], resultDue: [], resultVotes: [] };
     }
 
     const inbox = await fetchNotifications(accessToken);
     if ("error" in inbox) {
-      return { invitations: [], joinRequests: [] };
+      return { invitations: [], joinRequests: [], resultDue: [], resultVotes: [] };
     }
 
-    return inbox;
+    return {
+      invitations: inbox.invitations,
+      joinRequests: inbox.joinRequests,
+      resultDue: inbox.resultDue ?? [],
+      resultVotes: inbox.resultVotes ?? [],
+    };
   },
 );
 

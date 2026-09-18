@@ -1,6 +1,6 @@
 # Piquify
 
-Monorepo de porras entre amigos. `npm run dev` arranca web y backend a la vez, igual que en nite: Turbo ejecuta el script `dev` de cada app.
+Monorepo de piques entre amigos. `npm run dev` arranca web y backend a la vez, igual que en nite: Turbo ejecuta el script `dev` de cada app.
 
 ## Apps
 

@@ -1,3 +1,5 @@
+import type { BetSummary } from "./bet.js";
+
 export const PLAYGROUND_NAME_MAX_LENGTH = 80;
 
 export type PlaygroundRole = "admin" | "member";
@@ -42,6 +44,7 @@ export type PlaygroundDetail = Playground & {
   role: PlaygroundRole;
   members: PlaygroundMember[];
   joinRequests: PlaygroundJoinRequest[];
+  bets: BetSummary[];
 };
 
 export type PlaygroundInvite = {
