@@ -41,8 +41,9 @@ export function FriendRequestForm({
           <input
             name="code"
             required
-            minLength={8}
-            maxLength={8}
+            autoComplete="off"
+            spellCheck={false}
+            placeholder="K7M2-9QXA"
             className="mt-1.5 h-11 w-full rounded-xl border border-abismo/15 bg-crema/50 px-3 font-mono text-sm uppercase outline-none focus:border-laguna"
           />
         </label>

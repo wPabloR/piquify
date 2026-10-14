@@ -15,7 +15,9 @@ export async function sendFriendRequest(
   await uow.lockUser(high);
 
   if (await uow.friendshipExists(input.actorId, otherId.value)) return fail("ALREADY_FRIENDS");
-  if (await uow.pendingFriendRequest(input.actorId, otherId.value)) return fail("REQUEST_EXISTS");
+  if (await uow.pendingFriendRequest(input.actorId, otherId.value)) {
+    return fail("FRIEND_REQUEST_EXISTS");
+  }
 
   const inverse = await uow.pendingFriendRequest(otherId.value, input.actorId);
   if (inverse) {

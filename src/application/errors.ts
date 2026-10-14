@@ -11,6 +11,7 @@ const messages: Record<string, string> = {
   NOT_FRIENDS: "Solo puedes invitar a amigos por esta vía.",
   INVITE_EXISTS: "Ya hay una invitación pendiente.",
   REQUEST_EXISTS: "Ya enviaste una solicitud.",
+  FRIEND_REQUEST_EXISTS: "Ya enviaste una solicitud.",
   PIQUE_CLOSED: "Este pique ya no admite cambios.",
   INSUFFICIENT_BALANCE: "No tienes puntos suficientes.",
   INVALID_OPTION: "Esa opción no pertenece al pique.",
@@ -46,6 +47,7 @@ export function statusForCode(code: string) {
     code === "ALREADY_FRIENDS" ||
     code === "INVITE_EXISTS" ||
     code === "REQUEST_EXISTS" ||
+    code === "FRIEND_REQUEST_EXISTS" ||
     code === "PIQUE_CLOSED" ||
     code === "INSUFFICIENT_BALANCE" ||
     code === "ALREADY_VOTED" ||

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getSql, hasDatabaseUrl } from "@/infrastructure/db";
 import { syncDuePiques } from "@/application/sync-due-piques";
 import { ensureAccount } from "@/application/ensure-account";
+import { listInvitableFriends as listInvitableFriendsUseCase } from "@/application/list-invitable-friends";
 import { searchPeople as searchPeopleUseCase } from "@/application/search-people";
 import { searchPlaygrounds as searchPlaygroundsUseCase } from "@/application/search-playgrounds";
 import { withUnitOfWork } from "@/infrastructure/postgres-stores";
@@ -312,20 +313,9 @@ export async function listInvitableFriends(
   userId: string,
   playgroundId: string,
 ): Promise<FriendListItem[]> {
-  const sql = getSql();
-  const rows = await sql<{ id: string; display_name: string; handle: string }[]>`
-    select p.id, p.display_name, p.handle
-    from public.friendships f
-    join public.profiles p
-      on p.id = case when f.user_low = ${userId}::uuid then f.user_high else f.user_low end
-    where (f.user_low = ${userId}::uuid or f.user_high = ${userId}::uuid)
-      and not exists (
-        select 1 from public.playground_members m
-        where m.playground_id = ${playgroundId}::uuid and m.user_id = p.id
-      )
-    order by p.display_name
-  `;
-  return rows.map((row) => ({ id: row.id, name: row.display_name, handle: row.handle }));
+  return withUnitOfWork((uow) =>
+    listInvitableFriendsUseCase(uow, { actorId: userId, playgroundId }),
+  );
 }
 
 export async function getProfileByFriendCode(code: string) {

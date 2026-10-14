@@ -23,6 +23,12 @@ dinero real, pagos, custodia, KYC ni presentar los puntos como dinero.
   funciones SQL ni el cliente de datos de Supabase para el dominio.
 - Lecturas y escrituras van por Next.js (`postgres` + el rol `piquify_app`) y
   los casos de uso viven en TypeScript.
+- El `UnitOfWork` de Postgres se ensambla en `createStores`. El SQL de un
+  bounded context vive en su módulo (`postgres-friends.ts` para amigos) y se
+  reparte con el resto; no añadir otro dominio grande dentro de
+  `postgres-stores.ts`.
+- Las búsquedas `LIKE` usan `likeContains` (escape `!`) para que `%` y `_` no
+  enumeren filas. El código de playground o de amigo se compara por igualdad.
 - La autorización de negocio se valida en el servidor; nunca se confía solo en
   la interfaz.
 

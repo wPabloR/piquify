@@ -60,14 +60,15 @@ function memory() {
       notices.push({ userId: input.userId, kind: input.kind });
     },
     async searchPeople(userId: string, query: string) {
-      const needle = query.toLowerCase();
+      const needle = query.toLowerCase().replace(/^@/, "");
+      const code = query.replace(/[\s-]/g, "").toUpperCase();
       return [...profiles.values()]
         .filter((item) => item.id !== userId)
         .filter(
           (item) =>
             item.name.toLowerCase().includes(needle) ||
             item.handle.includes(needle) ||
-            item.friendCode === query.toUpperCase(),
+            item.friendCode === code,
         )
         .map((item) => ({
           id: item.id,
@@ -123,6 +124,13 @@ describe("sendFriendRequest", () => {
     const result = await sendFriendRequest(uow, { actorId: a, userId: b });
     expect(result).toEqual({ ok: false, code: "ALREADY_FRIENDS" });
   });
+
+  it("rechaza una segunda solicitud pendiente del mismo actor", async () => {
+    const uow = memory();
+    await sendFriendRequest(uow, { actorId: a, userId: b });
+    const result = await sendFriendRequest(uow, { actorId: a, userId: b });
+    expect(result).toEqual({ ok: false, code: "FRIEND_REQUEST_EXISTS" });
+  });
 });
 
 describe("respondToFriendRequest", () => {
@@ -131,6 +139,29 @@ describe("respondToFriendRequest", () => {
     await sendFriendRequest(uow, { actorId: a, userId: b });
     const result = await respondToFriendRequest(uow, { actorId: a, requestId: "req-1", accept: true });
     expect(result).toEqual({ ok: false, code: "NOT_FOUND" });
+  });
+
+  it("acepta y avisa a quien envió la solicitud", async () => {
+    const uow = memory();
+    await sendFriendRequest(uow, { actorId: a, userId: b });
+    const result = await respondToFriendRequest(uow, { actorId: b, requestId: "req-1", accept: true });
+    expect(result.ok).toBe(true);
+    expect(await uow.friendshipExists(a, b)).toBe(true);
+    expect(uow.notices.at(-1)?.kind).toBe("friend_accepted");
+  });
+
+  it("rechaza sin avisar y deja el par libre", async () => {
+    const uow = memory();
+    await sendFriendRequest(uow, { actorId: a, userId: b });
+    const declined = await respondToFriendRequest(uow, {
+      actorId: b,
+      requestId: "req-1",
+      accept: false,
+    });
+    expect(declined.ok).toBe(true);
+    expect(uow.notices.filter((item) => item.kind === "friend_accepted")).toHaveLength(0);
+    const again = await sendFriendRequest(uow, { actorId: a, userId: b });
+    expect(again.ok).toBe(true);
   });
 });
 
@@ -151,5 +182,16 @@ describe("searchPeople", () => {
     await sendFriendRequest(uow, { actorId: a, userId: b });
     const hits = await searchPeople(uow, { actorId: a, query: "biel" });
     expect(hits[0]).toMatchObject({ handle: "biel", relation: "outgoing" });
+  });
+
+  it("ignora consultas de menos de dos caracteres", async () => {
+    const uow = memory();
+    await expect(searchPeople(uow, { actorId: a, query: "b" })).resolves.toEqual([]);
+  });
+
+  it("encuentra por código exacto con guiones", async () => {
+    const uow = memory();
+    const hits = await searchPeople(uow, { actorId: a, query: "a1b2-c3d4" });
+    expect(hits[0]).toMatchObject({ handle: "biel", relation: "none" });
   });
 });

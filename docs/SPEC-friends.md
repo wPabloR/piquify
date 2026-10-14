@@ -40,8 +40,10 @@ destinatario) y spam de solicitudes (una pendiente por par).
 ## Testing
 
 Normalización y generación del código en `src/domain/friends.ts`. Casos de uso
-con un `UnitOfWork` en memoria: enviar, duplicar, autoenvío, aceptación cruzada
-y respuesta por una persona ajena.
+con un `UnitOfWork` en memoria: enviar, duplicar (`FRIEND_REQUEST_EXISTS`),
+autoenvío, aceptación cruzada, aceptar, rechazar (el par queda libre) y
+respuesta por una persona ajena. Búsqueda: mínimo 2 caracteres y código exacto.
+Invitables: ni miembros ni con invitación pendiente.
 
 ## Success criteria
 
