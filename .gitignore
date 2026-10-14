@@ -1,0 +1,27 @@
+# dependencies
+/node_modules
+
+# Next.js
+/.next/
+/out/
+
+# production
+/build
+
+# local environment files
+.env*
+!.env.example
+
+# logs and coverage
+*.log
+/coverage
+
+# editor and OS files
+.DS_Store
+Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
+
+# Supabase CLI cache
+/supabase/.temp/

@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+:root {
+  --abismo: #0f2e2a;
+  --marea: #00897b;
+  --laguna: #26c6b0;
+  --espuma: #d4f3ee;
+  --palma: #3e8e41;
+  --madera: #c77d2e;
+  --arena: #f6e3b4;
+  --crema: #f5faf7;
+  --coral: #f05d5e;
+  --tinta: #0f2e2a;
+  --tinta-suave: #587470;
+}
+
+@theme inline {
+  --color-abismo: var(--abismo);
+  --color-marea: var(--marea);
+  --color-laguna: var(--laguna);
+  --color-espuma: var(--espuma);
+  --color-palma: var(--palma);
+  --color-madera: var(--madera);
+  --color-arena: var(--arena);
+  --color-crema: var(--crema);
+  --color-coral: var(--coral);
+  --color-tinta: var(--tinta);
+  --color-tinta-suave: var(--tinta-suave);
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-outfit), system-ui, sans-serif;
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.75rem;
+  --shadow-card: 0 1px 2px rgb(15 46 42 / 0.06), 0 8px 24px -12px rgb(15 46 42 / 0.18);
+  --shadow-lift: 0 12px 32px -14px rgb(15 46 42 / 0.35);
+  --ease-marea: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--crema);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at 8% -8%, rgb(38 198 176 / 0.12), transparent 28rem),
+    var(--crema);
+  color: var(--tinta);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--laguna);
+  color: white;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "name": "piquify",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:integration": "vitest run src/infrastructure/db.integration.test.ts"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.117.3",
+    "lucide-react": "1.56.0",
+    "next": "16.4.0",
+    "postgres": "^3.4.9",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "10.12.0",
+    "eslint-config-next": "16.4.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3",
+    "vitest": "^5.0.4"
+  }
+}
