@@ -35,7 +35,8 @@ en la primera petición autenticada.
 La identidad llega por cookie (mismo origen) o `Authorization: Bearer`. El cuerpo
 de error es `{ "error": { "code", "message" } }`.
 
-- `GET` / `PATCH /me`, `GET /me/movements`
+- `GET /api/health` (sin auth: entorno + `SELECT 1`)
+- `GET` / `PATCH /me`, `GET /me/movements`, `GET /me/attention`
 - `GET` / `POST /playgrounds`
 - `GET /playgrounds/:id`, `GET /playgrounds/:id/piques`, `GET /playgrounds/:id/events`
 - `POST /playgrounds/:id/invitations`, `POST /playgrounds/:id/piques`, `POST /playgrounds/:id/join-requests`
@@ -62,13 +63,49 @@ No subas secretos ni uses la clave de servicio en el navegador.
 npm run lint
 npm run typecheck
 npm test
+npm run test:integration
 npm run build
 ```
 
+`npm test` son las unitarias. `npm run test:integration` exige `DATABASE_URL`
+del rol `piquify_app` (lee `.env.local` si no está en el entorno).
+
 La app queda en `http://localhost:3000`.
 
-Si el proyecto de Auth exige confirmar el correo, el alta no abre sesión hasta
-que se confirma. El límite de intentos lo aplica Supabase Auth.
+El alta entra sin confirmar el correo. En el proyecto Auth hay que apagar
+«Confirm email» (Authentication → Providers → Email) para que `signUp`
+devuelva sesión:
+https://supabase.com/dashboard/project/riukifewvizgdlqtfakn/auth/providers
+Si Auth exigiera confirmación, la UI pide revisar el correo. El límite de
+intentos lo aplica Supabase Auth.
+
+## Producción
+
+Un solo proyecto en Vercel. Variables de entorno (Production):
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `DATABASE_URL` (rol `piquify_app`, pooler, solo servidor)
+
+En el dashboard de Auth, Site URL y Redirect URLs deben ser el dominio de
+Vercel. Las migraciones de `supabase/migrations` ya están aplicadas en el
+proyecto remoto; no hay migración nueva en este lanzamiento.
+
+Tras el deploy: `GET /api/health` debe devolver 200. El humo mínimo es alta o
+login y un pique (crear o participar).
+
+### Rollback
+
+No hay feature flags. Si el deploy falla:
+
+1. Instant Rollback a la deployment anterior en Vercel, o
+   `vercel rollback` / redeploy del commit previo.
+2. Comprobar `GET /api/health` y el login.
+3. No revertir migraciones de Postgres: el esquema actual no tiene down
+   script. Un rollback de app deja el esquema como está.
+
+Los logs van a Vercel (`console` JSON de `logEvent`). No hay alertas externas
+en el MVP.
 
 ## Rutas
 
