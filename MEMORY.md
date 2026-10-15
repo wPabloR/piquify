@@ -9,7 +9,7 @@ obsoleto en lugar de acumular un diario.
 
 ## Objetivo actual
 
-Primer deploy a producción en Vercel.
+Vigilar el primer deploy y conectar GitHub a Vercel.
 
 ## Decisiones vigentes
 
@@ -32,23 +32,19 @@ Primer deploy a producción en Vercel.
 
 ## Estado
 
-- El mapa de capacidades del MVP está implementado, incluido «Te toca».
-- E2E local (cuenta Nuria): playground, pique, entrar, lock, proponer y
-  liquidar funcionan. «Te toca» muestra `closing` y `propose`; desaparece al
-  resolver. `GET /me/attention` coincide con `/`.
-- No se probó voto de un segundo participante (una sola sesión).
-- El overlay de hidratación era `data-cursor-ref` del navegador de Cursor, no
-  un bug de la app.
-- CI levanta Postgres 16 y corre `test:integration` con el rol `piquify_app`
-  sin UPDATE. `npm test` ya no incluye esos tests.
-- `GET /api/health` comprueba entorno y `SELECT 1`.
-- Quedó el playground `E2E Cierre MVP` (código `4826895a`) en la cuenta de
-  Nuria.
+- Producción: https://piquify.vercel.app (`www-pablo/piquify`).
+- `GET /api/health` en prod devolvió 200. Alta sin confirmación, playground y
+  pique funcionan. Rollback: Instant Rollback en Vercel.
+- Auth sigue en `riukifewvizgdlqtfakn`. Conviene poner Site URL y Redirect URLs
+  a `https://piquify.vercel.app`.
+- Vercel no está conectado a GitHub (falta Login Connection). Los deploys van
+  por CLI hasta que se enlace.
+- Humo: cuenta `@smokeprod15`, playground `Smoke Prod` código `4576867c`.
 
 ## Próximo paso
 
-Desplegar a Vercel y comprobar health + login.
+Conectar el repo GitHub al proyecto Vercel y fijar Site URL en Auth.
 
 ## Pendiente de decidir
 
-Nada bloqueante para el primer deploy.
+Nada bloqueante de producto.

@@ -81,6 +81,8 @@ intentos lo aplica Supabase Auth.
 
 ## Producción
 
+Producción: https://piquify.vercel.app
+
 Un solo proyecto en Vercel. Variables de entorno (Production):
 
 - `NEXT_PUBLIC_SUPABASE_URL`
