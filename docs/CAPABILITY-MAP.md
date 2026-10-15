@@ -9,8 +9,9 @@
 | participation | Entrar, cambiar opción, salir y cargo/devolución del stake | piques, ledger |
 | settlement | Propuesta, votación, reparto entero y bote residual | participation |
 | notifications | Actividad visible dentro de la web | playgrounds |
+| te-toca | Acciones pendientes en el inicio | piques, participation, settlement |
 
-Build order: identity → playgrounds, ledger → piques → participation → settlement → notifications
+Build order: identity → playgrounds, ledger → piques → participation → settlement → notifications → te-toca
 
 La aplicación Next.js es el único despliegue. Expone `/api/v1` para la web,
 Postman y un cliente futuro. El dinero real, los pagos, el chat, las

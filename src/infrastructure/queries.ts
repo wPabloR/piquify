@@ -6,7 +6,8 @@ import { listInvitableFriends as listInvitableFriendsUseCase } from "@/applicati
 import { searchPeople as searchPeopleUseCase } from "@/application/search-people";
 import { searchPlaygrounds as searchPlaygroundsUseCase } from "@/application/search-playgrounds";
 import { withUnitOfWork } from "@/infrastructure/postgres-stores";
-import { canCastVote } from "@/domain/access";
+import { canCastVote, canPropose } from "@/domain/access";
+import { buildAttentionItems } from "@/domain/attention";
 import type { PiqueStatus } from "@/domain/models";
 import {
   activityHref,
@@ -19,6 +20,7 @@ import {
 import type {
   AccessItem,
   ActivityItem,
+  AttentionItem,
   FriendListItem,
   HeadToHeadView,
   LedgerMovementView,
@@ -272,7 +274,7 @@ export async function listPiques(playgroundId: string, userId: string): Promise<
       myOptionId: mine ? mine.option_id : null,
       winningOptionIds: winning,
       canLeave: pique.status === "open" && Boolean(mine) && closesAt > now,
-      canPropose: isAdmin && pique.status === "locked",
+      canPropose: canPropose({ isAdmin, status: pique.status }),
       canVote: proposal
         ? canCastVote({
             status: pique.status,
@@ -379,6 +381,95 @@ export async function listLedgerMovements(
       when: relativeTime(iso(row.created_at)),
     };
   });
+}
+
+export async function listAttention(userId: string): Promise<AttentionItem[]> {
+  await syncDuePiques();
+  const sql = getSql();
+  const piques = await sql<
+    {
+      id: string;
+      playground_id: string;
+      question: string;
+      playground_name: string;
+      status: PiqueStatus;
+      closes_at: Date;
+      admin_id: string;
+    }[]
+  >`
+    select
+      q.id,
+      q.playground_id,
+      q.question,
+      q.status,
+      q.closes_at,
+      p.name as playground_name,
+      p.admin_id
+    from public.piques q
+    join public.playgrounds p on p.id = q.playground_id
+    join public.playground_members m
+      on m.playground_id = p.id and m.user_id = ${userId}::uuid
+    where q.status in ('open', 'locked', 'pending_result')
+  `;
+  if (piques.length === 0) return [];
+  const ids = piques.map((row) => row.id);
+  const [participations, proposals, votes] = await Promise.all([
+    sql<{ pique_id: string }[]>`
+      select pique_id
+      from public.participations
+      where user_id = ${userId}::uuid and pique_id in ${sql(ids)}
+    `,
+    sql<{ pique_id: string; proposed_by: string; voting_ends_at: Date }[]>`
+      select pique_id, proposed_by, voting_ends_at
+      from public.result_proposals
+      where pique_id in ${sql(ids)}
+    `,
+    sql<{ pique_id: string }[]>`
+      select pique_id
+      from public.result_votes
+      where user_id = ${userId}::uuid and pique_id in ${sql(ids)}
+    `,
+  ]);
+  const participating = new Set(participations.map((row) => row.pique_id));
+  const voted = new Set(votes.map((row) => row.pique_id));
+  const proposalByPique = new Map(proposals.map((row) => [row.pique_id, row]));
+  const now = new Date();
+  const picks = buildAttentionItems(
+    piques.map((row) => {
+      const proposal = proposalByPique.get(row.id);
+      return {
+        piqueId: row.id,
+        playgroundId: row.playground_id,
+        question: row.question,
+        playgroundName: row.playground_name,
+        status: row.status,
+        closesAt: row.closes_at,
+        votingEndsAt: proposal?.voting_ends_at ?? null,
+        isAdmin: row.admin_id === userId,
+        isMember: true,
+        isParticipant: participating.has(row.id),
+        isProposer: proposal?.proposed_by === userId,
+        alreadyVoted: voted.has(row.id),
+      };
+    }),
+    now,
+  );
+  return picks.map((item) => ({
+    kind: item.kind,
+    piqueId: item.piqueId,
+    playgroundId: item.playgroundId,
+    question: item.question,
+    playgroundName: item.playgroundName,
+    dueLabel: attentionDueLabel(item.kind, item.dueAt),
+    href: `/playgrounds/${item.playgroundId}#pique-${item.piqueId}`,
+  }));
+}
+
+function attentionDueLabel(kind: AttentionItem["kind"], dueAt: Date) {
+  const formatted = dateFormatter.format(dueAt);
+  if (kind === "vote") return `Votación hasta el ${formatted}`;
+  if (kind === "propose") return `Cerrado el ${formatted}`;
+  return `Cierra el ${formatted}`;
 }
 
 export async function getHeadToHead(actorId: string, otherId: string): Promise<HeadToHeadView | null> {

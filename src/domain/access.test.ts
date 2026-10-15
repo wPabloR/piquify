@@ -4,6 +4,7 @@ import {
   canCreatePique,
   canJoin,
   canLeave,
+  canPropose,
   nextStatusWhenDeadlinePasses,
   nextStatusWhenLastParticipantLeaves,
 } from "@/domain/access";
@@ -15,6 +16,12 @@ describe("acceso a un pique", () => {
   it("solo deja crear piques al admin", () => {
     expect(canCreatePique("admin")).toBe(true);
     expect(canCreatePique("member")).toBe(false);
+  });
+
+  it("solo deja proponer resultado al admin de un pique locked", () => {
+    expect(canPropose({ isAdmin: true, status: "locked" })).toBe(true);
+    expect(canPropose({ isAdmin: false, status: "locked" })).toBe(false);
+    expect(canPropose({ isAdmin: true, status: "open" })).toBe(false);
   });
 
   it("permite entrar con saldo y cambiar la opción sin otro cargo", () => {

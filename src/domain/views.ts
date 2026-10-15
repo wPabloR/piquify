@@ -21,6 +21,16 @@ export interface ProfileStats {
   net: number;
 }
 
+export interface AttentionItem {
+  kind: "vote" | "propose" | "closing";
+  piqueId: string;
+  playgroundId: string;
+  question: string;
+  playgroundName: string;
+  dueLabel: string;
+  href: string;
+}
+
 export interface LedgerMovementView {
   id: string;
   kind: LedgerKind;

@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --exclude src/**/*.integration.test.ts",
     "test:integration": "vitest run src/infrastructure/db.integration.test.ts"
   },
   "dependencies": {

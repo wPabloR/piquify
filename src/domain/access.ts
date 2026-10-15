@@ -4,6 +4,10 @@ export function canCreatePique(role: MemberRole): boolean {
   return role === "admin";
 }
 
+export function canPropose(input: { isAdmin: boolean; status: PiqueStatus }): boolean {
+  return input.isAdmin && input.status === "locked";
+}
+
 export function canJoin(input: {
   isMember: boolean;
   status: PiqueStatus;

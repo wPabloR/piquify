@@ -196,7 +196,8 @@ export function createStores(tx: Sql): UnitOfWork {
       return integer(row?.n ?? 0);
     },
     async lockLedger(userId) {
-      await tx`select 1 from public.ledger_entries where user_id = ${userId}::uuid for update`;
+      // FOR UPDATE exige UPDATE en la tabla; el rol solo tiene SELECT/INSERT.
+      await tx`select pg_advisory_xact_lock(hashtextextended('ledger:' || ${userId}::text, 0))`;
     },
     async balance(userId) {
       const [row] = await tx<{ total: number }[]>`

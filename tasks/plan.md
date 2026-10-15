@@ -17,6 +17,6 @@ Spec: `docs/SPEC-ledger.md`.
 - Las etiquetas viven en el dominio (`ledgerMovementLabel`).
 - La página lee por servidor; `GET /api/v1/me/movements` replica la misma lista.
 
-## Siguientes (aprobados, sin empezar)
+## Siguientes
 
-- Bloque «Te toca» en el inicio: votos pendientes y piques que cierran en 24 h.
+«Te toca» está especificado en `docs/SPEC-te-toca.md` e implementado.

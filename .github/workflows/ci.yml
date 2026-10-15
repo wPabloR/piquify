@@ -10,12 +10,27 @@ jobs:
     env:
       NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci
+      DATABASE_URL: postgresql://piquify_app:postgres@localhost:5432/postgres
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+      - run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - run: psql postgresql://postgres:postgres@localhost:5432/postgres -f src/infrastructure/ci-postgres.sql
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck

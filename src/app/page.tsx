@@ -2,16 +2,24 @@ import Link from "next/link";
 import { ArrowRight, Flame, Plus, Target, Trophy } from "lucide-react";
 import { redirect } from "next/navigation";
 import { ActivityList } from "@/components/activity-list";
+import { AttentionList } from "@/components/attention-list";
 import { Avatar } from "@/components/avatar";
 import { PlaygroundRow } from "@/components/playground-row";
-import { getViewer, listActivity, listFeaturedPiques, listPlaygrounds } from "@/infrastructure/queries";
+import {
+  getViewer,
+  listActivity,
+  listAttention,
+  listFeaturedPiques,
+  listPlaygrounds,
+} from "@/infrastructure/queries";
 
 export default async function DashboardPage() {
   const viewer = await getViewer();
   if (!viewer) redirect("/login");
-  const [playgrounds, activity] = await Promise.all([
+  const [playgrounds, activity, attention] = await Promise.all([
     listPlaygrounds(viewer.id),
     listActivity(),
+    listAttention(viewer.id),
   ]);
   const [featured, ...rest] = playgrounds;
   const featuredPiques = featured ? await listFeaturedPiques(featured.id, viewer.id) : [];
@@ -49,6 +57,15 @@ export default async function DashboardPage() {
           Nuevo playground
         </Link>
       </div>
+
+      {attention.length > 0 && (
+        <section aria-labelledby="te-toca" className="mb-8">
+          <h2 id="te-toca" className="font-display text-lg font-bold text-abismo">
+            Te toca
+          </h2>
+          <AttentionList items={attention} />
+        </section>
+      )}
 
       {featured ? (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
