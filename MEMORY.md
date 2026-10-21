@@ -9,8 +9,7 @@ obsoleto en lugar de acumular un diario.
 
 ## Objetivo actual
 
-Ajustar la versión móvil: navbar compacto (logo abre sidebar, puntos a la derecha)
-y contenido encuadrado.
+Servir la marca Mesa en `/favicon.ico`, que es la ruta que pide la pestaña.
 
 ## Decisiones vigentes
 
@@ -38,15 +37,15 @@ y contenido encuadrado.
   pique funcionan. Rollback: Instant Rollback en Vercel.
 - Auth sigue en `riukifewvizgdlqtfakn`. Conviene poner Site URL y Redirect URLs
   a `https://piquify.vercel.app`.
-- Vercel (`www-pablo/piquify`) está enlazado a `wPabloR/piquify`. La rama de
-  producción es `main` y los deploys desde Git están activos. El ajuste móvil
-  es el primer push posterior al enlace.
+- Vercel (`www-pablo/piquify`) está enlazado a `wPabloR/piquify`, rama `main`.
+  El push de `1c3cd2b` no disparó un build. Producción salió por CLI el 21 de
+  octubre y ya incluye el ajuste móvil y la marca Mesa.
 - Humo: cuenta `@smokeprod15`, playground `Smoke Prod` código `4576867c`.
 
 ## Próximo paso
 
 Fijar Site URL y Redirect URLs de Auth en `https://piquify.vercel.app`.
-Comprobar que el deploy de este push queda en producción.
+Este push comprueba si el enlace Git crea el deploy solo.
 
 ## Pendiente de decidir
 
