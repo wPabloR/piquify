@@ -9,7 +9,7 @@ obsoleto en lugar de acumular un diario.
 
 ## Objetivo actual
 
-Servir la marca Mesa en `/favicon.ico`, que es la ruta que pide la pestaña.
+Comprobar un alta: el correo abre `/auth/confirm` y deja la sesión abierta.
 
 ## Decisiones vigentes
 
@@ -18,7 +18,7 @@ Servir la marca Mesa en `/favicon.ico`, que es la ruta que pide la pestaña.
   ni lecturas por PostgREST.
 - Auth (alta, login, salida) en Server Actions. Cookie o Bearer; `resolveActor`
   unifica la identidad.
-- El alta entra sin confirmar el correo.
+- El alta exige confirmar el correo. La sesión empieza en `/auth/confirm`.
 - `DATABASE_URL` es la conexión de `piquify_app`, solo servidor. No hay clave
   de servicio en el cliente.
 - El perfil, el código de amigo y los 200 puntos se crean con `ensureAccount`.
@@ -33,19 +33,19 @@ Servir la marca Mesa en `/favicon.ico`, que es la ruta que pide la pestaña.
 ## Estado
 
 - Producción: https://piquify.vercel.app (`www-pablo/piquify`).
-- `GET /api/health` en prod devolvió 200. Alta sin confirmación, playground y
-  pique funcionan. Rollback: Instant Rollback en Vercel.
-- Auth sigue en `riukifewvizgdlqtfakn`. Conviene poner Site URL y Redirect URLs
-  a `https://piquify.vercel.app`.
-- Vercel (`www-pablo/piquify`) está enlazado a `wPabloR/piquify`, rama `main`.
-  El push de `1c3cd2b` no disparó un build. Producción salió por CLI el 21 de
-  octubre y ya incluye el ajuste móvil y la marca Mesa.
+- `GET /api/health` en prod devolvió 200. Playground y pique funcionan.
+  Rollback: Instant Rollback en Vercel.
+- Auth (`riukifewvizgdlqtfakn`) exige confirmar el correo. Site URL,
+  Redirect URLs y la plantilla de `/auth/confirm` están en el dashboard.
+  Este push publica la ruta.
+- Vercel (`www-pablo/piquify`) despliega `main` desde Git. Producción incluye
+  el ajuste móvil, la marca Mesa y `/favicon.ico`.
 - Humo: cuenta `@smokeprod15`, playground `Smoke Prod` código `4576867c`.
 
 ## Próximo paso
 
-Fijar Site URL y Redirect URLs de Auth en `https://piquify.vercel.app`.
-Este push comprueba si el enlace Git crea el deploy solo.
+Comprobar el alta con el enlace del correo cuando el deploy de este push
+esté en producción.
 
 ## Pendiente de decidir
 

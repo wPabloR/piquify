@@ -1,22 +1,26 @@
-# Plan: historial de movimientos en el perfil
+# Plan: URL de Auth y confirmación de correo
 
-El plan de amigos está cerrado. `/add/[code]`, estadísticas y cara a cara ya
-están en el código.
+El ajuste móvil, la marca y el deploy de `main` desde GitHub ya están en
+producción. La app ya pide el correo cuando `signUp` no devuelve sesión y
+`/auth/confirm` valida el enlace.
 
 ## Objetivo
 
-`/profile` muestra los movimientos inmutables que componen el saldo global.
-Cada apunte es entero, con signo, etiqueta y enlace al pique cuando existe.
+Los enlaces que genera Supabase Auth abren la app de producción, y una cuenta
+nueva no entra hasta confirmar el correo.
 
-Spec: `docs/SPEC-ledger.md`.
+Spec: `docs/SPEC-identity.md`.
 
 ## Decisiones
 
-- Solo el actor ve sus movimientos. Ni ranking ni perfil ajeno.
-- Los últimos 50, del más reciente al más antiguo. Sin paginación en el MVP.
-- Las etiquetas viven en el dominio (`ledgerMovementLabel`).
-- La página lee por servidor; `GET /api/v1/me/movements` replica la misma lista.
+- Un solo proyecto Auth, `riukifewvizgdlqtfakn`. No se crea otro.
+- Site URL: `https://piquify.vercel.app`.
+- Redirect URLs: `https://piquify.vercel.app/**` y `http://localhost:3000/**`.
+- «Confirm email» queda encendido.
+- La plantilla de confirmación enlaza a
+  `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next={{ .RedirectTo }}`.
 
-## Siguientes
+## Hecho cuando
 
-«Te toca» está especificado en `docs/SPEC-te-toca.md` e implementado.
+El dashboard muestra esas URLs y la confirmación encendida, el enlace del
+correo entra en la app, y `GET /api/health` responde 200.

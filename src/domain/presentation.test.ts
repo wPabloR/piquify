@@ -3,6 +3,7 @@ import {
   activityHref,
   authFormSnapshot,
   credentialFailure,
+  isUnconfirmedEmail,
   ledgerMovementLabel,
   parseLedgerKind,
   optionShare,
@@ -32,6 +33,12 @@ describe("authFormSnapshot", () => {
     expect(snapshot.values).toEqual({ email: "nuria@example.com" });
     expect(snapshot.fieldErrors.email).toBe(snapshot.fieldErrors.password);
     expect(snapshot.error).toBe(snapshot.fieldErrors.email);
+  });
+
+  it("reconoce una cuenta pendiente de confirmar", () => {
+    expect(isUnconfirmedEmail({ code: "email_not_confirmed" })).toBe(true);
+    expect(isUnconfirmedEmail({ message: "Email not confirmed" })).toBe(true);
+    expect(isUnconfirmedEmail({ message: "Invalid login credentials" })).toBe(false);
   });
 });
 

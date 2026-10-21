@@ -33,9 +33,10 @@ export async function proxy(request: NextRequest) {
   const signedIn = Boolean(data?.claims.sub);
   const path = request.nextUrl.pathname;
   const isAuthPage = path === "/login" || path === "/signup";
+  const isConfirm = path === "/auth/confirm";
   const isApi = path.startsWith("/api/");
 
-  if (!signedIn && !isAuthPage && !isApi) {
+  if (!signedIn && !isAuthPage && !isConfirm && !isApi) {
     const login = request.nextUrl.clone();
     login.pathname = "/login";
     login.search = `?next=${encodeURIComponent(path + request.nextUrl.search)}`;

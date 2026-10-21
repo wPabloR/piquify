@@ -72,26 +72,32 @@ del rol `piquify_app` (lee `.env.local` si no está en el entorno).
 
 La app queda en `http://localhost:3000`.
 
-El alta entra sin confirmar el correo. En el proyecto Auth hay que apagar
-«Confirm email» (Authentication → Providers → Email) para que `signUp`
-devuelva sesión:
+El alta pide confirmar el correo. `signUp` no abre sesión hasta que el enlace
+de `/auth/confirm` valida el token. La plantilla de confirmación debe apuntar
+a `{{ .SiteURL }}/auth/confirm` con `token_hash`, `type=email` y `next`.
+Site URL es `https://piquify.vercel.app`. Redirect URLs:
+`https://piquify.vercel.app/**` y `http://localhost:3000/**`.
+El límite de intentos lo aplica Supabase Auth:
 https://supabase.com/dashboard/project/riukifewvizgdlqtfakn/auth/providers
-Si Auth exigiera confirmación, la UI pide revisar el correo. El límite de
-intentos lo aplica Supabase Auth.
 
 ## Producción
 
 Producción: https://piquify.vercel.app
 
-Un solo proyecto en Vercel. Variables de entorno (Production):
+Un solo proyecto en Vercel, `www-pablo/piquify`, enlazado a
+`wPabloR/piquify`. Un push a `main` despliega producción. La GitHub App de
+Vercel tiene que incluir ese repo; si no, el proyecto puede figurar enlazado
+y no recibir el push. Redeploy repite el despliegue actual: no publica un
+commit más nuevo de `main`.
+
+Variables de entorno (Production):
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 - `DATABASE_URL` (rol `piquify_app`, pooler, solo servidor)
 
-En el dashboard de Auth, Site URL y Redirect URLs deben ser el dominio de
-Vercel. Las migraciones de `supabase/migrations` ya están aplicadas en el
-proyecto remoto; no hay migración nueva en este lanzamiento.
+Las migraciones de `supabase/migrations` ya están aplicadas en el proyecto
+remoto.
 
 Tras el deploy: `GET /api/health` debe devolver 200. El humo mínimo es alta o
 login y un pique (crear o participar).

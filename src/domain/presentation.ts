@@ -49,6 +49,13 @@ export function authFormSnapshot(input: {
   };
 }
 
+export const CONFIRM_EMAIL_MESSAGE =
+  "Revisa tu correo para confirmar la cuenta antes de entrar.";
+
+export function isUnconfirmedEmail(error: { code?: string; message?: string }) {
+  return error.code === "email_not_confirmed" || /email not confirmed/i.test(error.message ?? "");
+}
+
 export function credentialFailure(email: string): AuthFormSnapshot {
   const message = "Revisa el correo y la contraseña.";
   return {

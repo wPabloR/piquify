@@ -1,12 +1,19 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { logEvent } from "@/lib/logger";
 import { safeErrorCode, translateError } from "@/application/errors";
 import { parseDisplayName, parseEmail, parseHandle, parsePassword } from "@/domain/validation";
-import { authFormSnapshot, credentialFailure, type AuthField } from "@/domain/presentation";
-import { safeNextPath } from "@/lib/safe-path";
+import {
+  CONFIRM_EMAIL_MESSAGE,
+  authFormSnapshot,
+  credentialFailure,
+  isUnconfirmedEmail,
+  type AuthField,
+} from "@/domain/presentation";
+import { safeNextPath, safeReturnPath } from "@/lib/safe-path";
 
 export interface ActionState {
   error?: string;
@@ -41,10 +48,14 @@ export async function signUp(_: ActionState, formData: FormData): Promise<Action
     return { error: "Revisa los datos." };
   }
   const supabase = await createClient();
+  const next = safeNextPath(read(formData, "next"));
   const { data, error } = await supabase.auth.signUp({
     email: email.value,
     password: password.value,
-    options: { data: { display_name: name.value, handle: handle.value } },
+    options: {
+      emailRedirectTo: await confirmationRedirect(next),
+      data: { display_name: name.value, handle: handle.value },
+    },
   });
   if (error) {
     return {
@@ -57,7 +68,6 @@ export async function signUp(_: ActionState, formData: FormData): Promise<Action
       ...fail("sign_up", error.message),
     };
   }
-  const next = safeNextPath(read(formData, "next"));
   if (!data.session) {
     return {
       ...authFormSnapshot({
@@ -66,7 +76,7 @@ export async function signUp(_: ActionState, formData: FormData): Promise<Action
         email: email.value,
         errors: {},
       }),
-      message: "Revisa tu correo para confirmar la cuenta antes de entrar.",
+      message: CONFIRM_EMAIL_MESSAGE,
     };
   }
   redirect(next ?? "/");
@@ -93,7 +103,15 @@ export async function signIn(_: ActionState, formData: FormData): Promise<Action
     email: email.value,
     password: password.value,
   });
-  if (error) return credentialFailure(email.value);
+  if (error) {
+    if (isUnconfirmedEmail(error)) {
+      return {
+        ...authFormSnapshot({ email: email.value, errors: {} }),
+        message: CONFIRM_EMAIL_MESSAGE,
+      };
+    }
+    return credentialFailure(email.value);
+  }
   redirect(safeNextPath(read(formData, "next")) ?? "/");
 }
 
@@ -106,6 +124,16 @@ export async function signOut() {
 function fail(action: string, message: string): ActionState {
   logEvent("error", action, { code: safeErrorCode(message) });
   return { error: translateError(message) };
+}
+
+async function confirmationRedirect(next: string | null) {
+  const headerStore = await headers();
+  const host = headerStore.get("x-forwarded-host") ?? headerStore.get("host");
+  const origin =
+    host === "localhost:3000" || host === "127.0.0.1:3000"
+      ? "http://localhost:3000"
+      : "https://piquify.vercel.app";
+  return `${origin}${safeReturnPath(next) ?? "/"}`;
 }
 
 function read(formData: FormData, key: string) {

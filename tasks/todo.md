@@ -1,23 +1,25 @@
 # Tasks
 
-La iteración de amigos (código personal, solicitudes, búsqueda unificada) está
-cerrada. El siguiente trabajo es el historial de movimientos.
+El historial de movimientos y «Te toca» están cerrados. El deploy de `main`
+ya lo hace la GitHub App de Vercel. La app ya tiene `/auth/confirm`.
 
-## Task 1: Dominio del ledger visible
+## Task 1: URL de Auth
 
-- [x] Etiquetas de `opening_balance`, `stake_hold`, `stake_refund` y `payout`.
-- [x] Tests unitarios.
+- [x] En Authentication → URL Configuration del proyecto
+  `riukifewvizgdlqtfakn`, Site URL = `https://piquify.vercel.app`.
+- [x] Redirect URLs incluyen `https://piquify.vercel.app/**` y
+  `http://localhost:3000/**`.
 
-## Task 2: Lectura
+## Task 2: Confirmación de correo
 
-- [x] Consulta de los últimos 50 movimientos del actor, con playground y pique.
-- [x] `GET /api/v1/me/movements`.
+- [x] «Confirm email» encendido en Authentication → Providers → Email.
+  `mailer_autoconfirm` está en false.
+- [x] La plantilla de confirmación enlaza a
+  `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next={{ .RedirectTo }}`.
 
-## Task 3: UI
+## Task 3: Comprobar
 
-- [x] Sección Movimientos en `/profile`.
-
-## Task 4: Cierre
-
-- [x] Specs, README y MEMORY.
-- [x] `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`.
+- [ ] Un alta nueva no entra hasta abrir el enlace del correo.
+- [ ] Ese enlace deja la sesión abierta en https://piquify.vercel.app.
+- [ ] `GET /api/health` responde 200.
+- [ ] README, `docs/SPEC-identity.md` y MEMORY coinciden con el dashboard.

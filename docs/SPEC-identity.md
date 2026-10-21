@@ -13,6 +13,10 @@ automático. El perfil muestra nombre y usuario; el correo permanece en Auth.
   La contraseña se vacía. El error se marca en el campo afectado.
 - Un fallo de credenciales no distingue si el correo existe.
 - La sesión viaja en cookies `httpOnly` gestionadas por `@supabase/ssr`.
+- En Auth, Site URL es `https://piquify.vercel.app`. Las Redirect URLs incluyen
+  ese origen y `http://localhost:3000/**` para desarrollo.
+- El alta exige confirmar el correo. Sin sesión, la UI pide revisar el correo.
+  El enlace abre `/auth/confirm`, que valida `token_hash` y solo entonces entra.
 - `src/proxy.ts` refresca la sesión con `getClaims()`; el servidor no confía en
   `getSession()`.
 - La primera petición autenticada crea `profiles` y el movimiento inicial del

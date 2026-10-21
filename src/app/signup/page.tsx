@@ -16,7 +16,7 @@ export default async function SignupPage({
           Crea tu cuenta
         </h1>
         <p className="mt-1 mb-6 text-sm text-tinta-suave">
-          Empiezas con 200 puntos para jugar con tu gente.
+          Te enviaremos un correo para confirmar la cuenta. Empiezas con 200 puntos.
         </p>
         <AuthForm mode="signup" next={next} />
       </section>

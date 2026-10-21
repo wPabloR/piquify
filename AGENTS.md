@@ -16,6 +16,7 @@ dinero real, pagos, custodia, KYC ni presentar los puntos como dinero.
 
 - Aplicación full-stack con Next.js, React y TypeScript.
 - Un único proyecto y un único despliegue de producción en Vercel.
+  Los pushes a `main` despliegan ese proyecto.
 - Usar las capacidades de servidor de Next.js (Server Components, Server Actions
   de autenticación y Route Handlers `/api/v1`) en lugar de crear una API Express
   separada.
