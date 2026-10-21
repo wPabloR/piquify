@@ -15,7 +15,7 @@ export default async function HeadToHeadPage({
   if (!data) notFound();
 
   return (
-    <main className="mx-auto max-w-2xl px-5 pb-20 pt-8">
+    <main className="mx-auto max-w-2xl px-4 pb-20 pt-8 sm:px-5">
       <Link href="/profile" className="text-sm font-medium text-tinta-suave hover:text-marea">
         Volver al perfil
       </Link>

@@ -21,7 +21,7 @@ export default async function SearchPage({
   const empty = query.length > 0 && playgrounds.length === 0 && people.length === 0;
 
   return (
-    <main className="mx-auto max-w-2xl px-5 pb-20 pt-8">
+    <main className="mx-auto max-w-2xl px-4 pb-20 pt-8 sm:px-5">
       <h1 className="font-display text-3xl font-extrabold tracking-tight text-abismo">Buscar</h1>
       <p className="mt-1 text-sm text-tinta-suave">
         Encuentra playgrounds y personas por nombre, usuario o código.

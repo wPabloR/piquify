@@ -1,0 +1,11 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Token with a rounded bite: the cut is the open pique. -->
+  <defs>
+    <mask id="bite">
+      <rect width="100" height="100" fill="white"/>
+      <circle cx="68" cy="34" r="16" fill="black"/>
+    </mask>
+  </defs>
+  <circle cx="48" cy="54" r="30" fill="currentColor" mask="url(#bite)"/>
+  <circle cx="68" cy="34" r="6" fill="currentColor"/>
+</svg>

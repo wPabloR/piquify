@@ -1,0 +1,11 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- Abstract shell: five ribs from a hinge, offset for tension. -->
+  <g stroke="currentColor" stroke-width="3.5" stroke-linecap="round">
+    <path d="M48 76 C 18 70 16 36 48 22"/>
+    <path d="M48 76 C 30 72 28 42 50 28"/>
+    <path d="M48 76 C 48 70 50 40 52 24"/>
+    <path d="M48 76 C 66 72 70 42 58 26"/>
+    <path d="M48 76 C 80 68 86 38 64 22"/>
+  </g>
+  <circle cx="48" cy="76" r="5" fill="currentColor"/>
+</svg>

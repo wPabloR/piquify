@@ -32,7 +32,7 @@ export default async function PlaygroundPage({
   ]);
 
   return (
-    <main className="mx-auto max-w-[1240px] px-5 pb-20 pt-6">
+    <main className="mx-auto max-w-[1240px] px-4 pb-20 pt-6 sm:px-5">
       <Link
         href="/"
         className="mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-tinta-suave transition-colors hover:text-marea"
@@ -46,7 +46,7 @@ export default async function PlaygroundPage({
           {playground.emoji}
         </span>
         <div className="min-w-0 flex-1">
-          <h1 className="font-display text-3xl font-extrabold tracking-tight text-abismo">{playground.name}</h1>
+          <h1 className="break-words font-display text-2xl font-extrabold tracking-tight text-abismo sm:text-3xl">{playground.name}</h1>
           <p className="mt-1 text-sm text-tinta-suave">{playground.tagline}</p>
           <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-tinta-suave">
             <span className="flex items-center gap-1.5">

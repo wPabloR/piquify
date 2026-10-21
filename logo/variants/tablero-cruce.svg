@@ -1,0 +1,13 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cuatro cruces de tablero y dos fichas enfrentadas. -->
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+    <path d="M36 22 V78"/>
+    <path d="M64 22 V78"/>
+    <path d="M22 36 H78"/>
+    <path d="M22 64 H78"/>
+  </g>
+  <g fill="currentColor">
+    <circle cx="36" cy="64" r="8"/>
+    <circle cx="64" cy="36" r="5"/>
+  </g>
+</svg>

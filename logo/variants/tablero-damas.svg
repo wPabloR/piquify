@@ -1,0 +1,9 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Tres casillas y la cuarta ocupada por una ficha. -->
+  <g fill="currentColor">
+    <rect x="18" y="18" width="26" height="26" rx="6"/>
+    <rect x="52" y="18" width="26" height="26" rx="6"/>
+    <rect x="18" y="52" width="26" height="26" rx="6"/>
+    <circle cx="65" cy="65" r="9"/>
+  </g>
+</svg>

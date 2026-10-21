@@ -12,7 +12,7 @@ export default function NewPlaygroundPage() {
   const [pending, setPending] = useState(false);
 
   return (
-    <main className="mx-auto max-w-lg px-5 pb-20 pt-6">
+    <main className="mx-auto max-w-lg px-4 pb-20 pt-6 sm:px-5">
       <Link href="/" className="mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-tinta-suave hover:text-marea">
         <ArrowLeft className="h-4 w-4" aria-hidden />
         Mis playgrounds

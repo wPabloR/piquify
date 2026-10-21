@@ -1,0 +1,6 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Una casilla y el trazo del envite, cerrado por la ficha. -->
+  <rect x="22" y="22" width="56" height="56" rx="12" fill="none" stroke="currentColor" stroke-width="3.5"/>
+  <line x1="38" y1="62" x2="56" y2="44" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="64" cy="36" r="5.5" fill="currentColor"/>
+</svg>

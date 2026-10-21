@@ -42,12 +42,14 @@
 
 html {
   min-width: 320px;
+  overflow-x: clip;
   background: var(--crema);
 }
 
 body {
   min-height: 100vh;
   margin: 0;
+  overflow-x: clip;
   background:
     radial-gradient(circle at 8% -8%, rgb(38 198 176 / 0.12), transparent 28rem),
     var(--crema);

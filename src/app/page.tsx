@@ -32,13 +32,13 @@ export default async function DashboardPage() {
   }).format(new Date());
 
   return (
-    <main className="mx-auto max-w-[1240px] px-5 pb-20 pt-8">
+    <main className="mx-auto max-w-[1240px] px-4 pb-20 pt-6 sm:px-5 sm:pt-8">
       <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-marea">
             {today}
           </p>
-          <h1 className="font-display text-3xl font-extrabold tracking-tight text-abismo sm:text-4xl">
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-abismo sm:text-4xl">
             Hola, {viewer.name.split(" ")[0]} 🐚
           </h1>
           <p className="mt-1 text-sm text-tinta-suave">
@@ -70,19 +70,21 @@ export default async function DashboardPage() {
       {featured ? (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div>
-            <section aria-labelledby="destacado" className="relative overflow-hidden rounded-3xl bg-abismo p-6 text-crema shadow-lift sm:p-8">
-              <div className="relative flex flex-wrap items-start gap-4">
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-crema/10 text-3xl" aria-hidden>
-                  {featured.emoji}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-laguna">Más movimiento ahora</p>
-                  <h2 id="destacado" className="mt-1 font-display text-2xl font-extrabold tracking-tight sm:text-3xl">
-                    {featured.name}
-                  </h2>
-                  <p className="mt-1 text-sm text-espuma/70">{featured.tagline}</p>
+            <section aria-labelledby="destacado" className="relative overflow-hidden rounded-3xl bg-abismo p-5 text-crema shadow-lift sm:p-8">
+              <div className="relative flex flex-col gap-4 sm:flex-row sm:items-start">
+                <div className="flex min-w-0 flex-1 items-start gap-3">
+                  <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-crema/10 text-3xl" aria-hidden>
+                    {featured.emoji}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-laguna">Más movimiento ahora</p>
+                    <h2 id="destacado" className="mt-1 font-display text-2xl font-extrabold tracking-tight sm:text-3xl">
+                      {featured.name}
+                    </h2>
+                    <p className="mt-1 text-sm text-espuma/70">{featured.tagline}</p>
+                  </div>
                 </div>
-                <Link href={`/playgrounds/${featured.id}`} className="flex items-center gap-2 rounded-xl bg-crema px-4 py-2.5 text-sm font-semibold text-abismo hover:bg-espuma">
+                <Link href={`/playgrounds/${featured.id}`} className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl bg-crema px-4 py-2.5 text-sm font-semibold text-abismo hover:bg-espuma">
                   Entrar
                   <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>

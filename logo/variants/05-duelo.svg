@@ -1,0 +1,16 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- Friendly duel: two facing arcs, spark in the gap. -->
+  <path
+    d="M42 24 A 26 26 0 1 0 42 76"
+    stroke="currentColor"
+    stroke-width="4"
+    stroke-linecap="round"
+  />
+  <path
+    d="M58 24 A 26 26 0 1 1 58 76"
+    stroke="currentColor"
+    stroke-width="4"
+    stroke-linecap="round"
+  />
+  <circle cx="50" cy="50" r="5.5" fill="currentColor"/>
+</svg>

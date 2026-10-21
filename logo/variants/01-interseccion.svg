@@ -1,0 +1,7 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- Two friends overlap: the lens is the shared pique. -->
+  <circle cx="40" cy="52" r="24" stroke="currentColor" stroke-width="3.5"/>
+  <circle cx="60" cy="52" r="24" stroke="currentColor" stroke-width="3.5"/>
+  <circle cx="50" cy="52" r="9" fill="currentColor"/>
+  <circle cx="68" cy="30" r="4" fill="currentColor"/>
+</svg>

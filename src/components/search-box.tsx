@@ -15,9 +15,11 @@ type Hit =
 export function SearchBox({
   defaultQuery = "",
   className = "relative ml-auto min-w-0 flex-1 max-w-64",
+  placeholder = "Buscar playgrounds y personas",
 }: {
   defaultQuery?: string;
   className?: string;
+  placeholder?: string;
 }) {
   const router = useRouter();
   const listId = useId();
@@ -118,7 +120,7 @@ export function SearchBox({
         aria-expanded={showList}
         aria-controls={listId}
         aria-activedescendant={showList && displayHits[active] ? `${listId}-${active}` : undefined}
-        placeholder="Buscar playgrounds y personas"
+        placeholder={placeholder}
         aria-label="Buscar playgrounds y personas"
         onChange={(event) => {
           setQuery(event.target.value);

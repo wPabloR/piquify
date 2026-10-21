@@ -8,7 +8,7 @@ export default async function InvitationsPage() {
   const items = await listAccess(viewer.id);
 
   return (
-    <main className="mx-auto max-w-2xl px-5 pb-20 pt-8">
+    <main className="mx-auto max-w-2xl px-4 pb-20 pt-8 sm:px-5">
       <h1 className="font-display text-3xl font-extrabold tracking-tight text-abismo">
         Invitaciones y solicitudes
       </h1>

@@ -1,0 +1,14 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Three friends around a table: the large node is the group, the small is the stake. -->
+  <g fill="currentColor">
+    <circle cx="38" cy="40" r="9"/>
+    <circle cx="64" cy="36" r="7"/>
+    <circle cx="52" cy="62" r="11"/>
+    <circle cx="74" cy="58" r="3.5"/>
+  </g>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+    <path d="M45 46 L48 52"/>
+    <path d="M58 42 L54 52"/>
+    <path d="M62 62 L70 59"/>
+  </g>
+</svg>

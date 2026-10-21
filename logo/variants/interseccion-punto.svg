@@ -1,0 +1,13 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="right-dot">
+      <circle cx="60" cy="54" r="25"/>
+    </clipPath>
+  </defs>
+  <g fill="none" stroke="currentColor" stroke-width="3.5">
+    <circle cx="40" cy="54" r="25"/>
+    <circle cx="60" cy="54" r="25"/>
+  </g>
+  <circle cx="40" cy="54" r="25" fill="currentColor" clip-path="url(#right-dot)"/>
+  <circle cx="70" cy="28" r="4" fill="currentColor"/>
+</svg>

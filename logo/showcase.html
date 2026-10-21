@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piquify — Exploración de logo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Outfit:wght@500;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background: #f5faf7;
+            color: #0f2e2a;
+            overflow-x: hidden;
+        }
+        .font-mono { font-family: 'JetBrains Mono', 'Courier New', monospace; }
+        .font-display { font-family: 'Outfit', sans-serif; }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+        }
+        html { scroll-behavior: smooth; }
+        .logo-card { transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+        .logo-card:hover { transform: translateY(-4px); }
+        .logo-canvas { position: relative; transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+        .logo-aura {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(0,137,123,0.22) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: scale(0.5);
+            opacity: 0;
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            filter: blur(40px);
+            pointer-events: none;
+        }
+        .logo-card:hover .logo-aura { transform: scale(1); opacity: 1; }
+        .divider-line {
+            width: 0;
+            height: 1px;
+            background: #0f2e2a;
+            opacity: 0.2;
+            transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .logo-card:hover .divider-line { width: 100%; }
+        .tracking-ultra-wide { letter-spacing: 0.2em; }
+        .text-balance { text-wrap: balance; }
+        .swatch {
+            width: 18px; height: 18px; border-radius: 999px;
+            box-shadow: inset 0 0 0 1px rgb(15 46 42 / 0.12);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const PTrazo = () => (
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" className="w-full h-full">
+                <g stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M34 24 C 14 40, 14 60, 34 76" strokeWidth="4"/>
+                    <path d="M66 24 C 86 40, 86 60, 66 76" strokeWidth="4"/>
+                    <path d="M46 40 L46 60" strokeWidth="3"/>
+                    <path d="M46 40 H51 C 58 40, 58 51, 51 51 H46" strokeWidth="3"/>
+                </g>
+            </svg>
+        );
+        const PSolida = () => (
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                <g fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round">
+                    <path d="M34 24 C 14 40, 14 60, 34 76"/>
+                    <path d="M66 24 C 86 40, 86 60, 66 76"/>
+                </g>
+                <path fill="currentColor" d="M45 39c0-1.3 1.1-2.4 2.4-2.4h5c5.6 0 10.1 4.5 10.1 10.1S58 57 52.4 57H50v9.6c0 1.3-1.1 2.4-2.4 2.4s-2.4-1.1-2.4-2.4V39zm4.8 13.8h2.6c2.9 0 5.3-2.4 5.3-5.3s-2.4-5.3-5.3-5.3h-2.6v10.6z"/>
+            </svg>
+        );
+        const PAcento = () => (
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" className="w-full h-full">
+                <path d="M36 26 C 16 42, 16 58, 36 74" stroke="currentColor" strokeWidth="4" strokeLinecap="round"/>
+                <path d="M64 26 C 84 42, 84 58, 64 74" stroke="currentColor" strokeWidth="4" strokeLinecap="round"/>
+                <g stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M47 43 L47 57"/>
+                    <path d="M47 43 H50.5 C 55.5 43, 55.5 51, 50.5 51 H47"/>
+                </g>
+            </svg>
+        );
+        const PRival = () => (
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                <path fill="currentColor" d="M32 34c0-1.4 1.1-2.5 2.5-2.5h8c7.5 0 13.5 6 13.5 13.5S50 58.5 42.5 58.5H38v10c0 1.4-1.1 2.5-2.5 2.5S33 69.9 33 68.5V34zm5 19h3.5c4.1 0 7.5-3.4 7.5-7.5S44.6 38 40.5 38H37v15z"/>
+                <path d="M70 22 C 90 38, 90 62, 70 78" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"/>
+            </svg>
+        );
+
+        const logos = [
+            {
+                Component: PTrazo,
+                title: "P trazo",
+                subtitle: "Arcos fuertes · P media",
+                file: "variants/duelo-p-trazo.svg",
+                philosophy: "Los arcos recuperan el peso del duelo. La P baja de altura y de grosor: se lee, pero no tapa el cara a cara."
+            },
+            {
+                Component: PSolida,
+                title: "P sólida",
+                subtitle: "Letra pequeña",
+                file: "variants/duelo-p-solida.svg",
+                philosophy: "Misma composición, P compacta en el hueco del envite. Casi el tamaño del punto original."
+            },
+            {
+                Component: PAcento,
+                title: "P acento",
+                subtitle: "La más discreta",
+                file: "variants/duelo-p-acento.svg",
+                philosophy: "Es el duelo abierto con una P de trazo fino en el centro. Quien busca la marca la ve; quien mira de lejos ve el pique."
+            },
+            {
+                Component: PRival,
+                title: "P rival",
+                subtitle: "P menor vs arco",
+                file: "variants/duelo-p-rival.svg",
+                philosophy: "Sigue siendo Piquify frente al pique, pero la letra ya no llena el campo: el arco derecho pesa igual o más."
+            }
+        ];
+
+        const LogoShowcase = () => {
+            const [ink, setInk] = React.useState("#0f2e2a");
+            return (
+                <div className="min-h-screen flex flex-col items-center py-20 px-6">
+                    <div className="text-center mb-16 max-w-3xl">
+                        <h1 className="font-display text-6xl md:text-7xl font-bold tracking-tight mb-6">
+                            Piquify
+                        </h1>
+                        <p className="font-mono text-xs opacity-40 uppercase tracking-ultra-wide mb-6">
+                            Ronda 4 · P más discreta
+                        </p>
+                        <p className="text-sm opacity-70 max-w-xl mx-auto mb-8 font-light leading-relaxed">
+                            Los arcos mandan; la P queda como firma. Elige una.
+                        </p>
+                        <div className="flex items-center justify-center gap-3 mb-8">
+                            {[
+                                ["#0f2e2a", "Abismo"],
+                                ["#00897b", "Marea"],
+                                ["#f05d5e", "Coral"],
+                            ].map(([hex, name]) => (
+                                <button
+                                    key={hex}
+                                    type="button"
+                                    onClick={() => setInk(hex)}
+                                    className="flex items-center gap-2 rounded-full border border-[#0f2e2a]/10 bg-white px-3 py-1.5 text-xs"
+                                    aria-pressed={ink === hex}
+                                >
+                                    <span className="swatch" style={{ background: hex }}></span>
+                                    {name}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="w-12 h-[1px] bg-[#0f2e2a] mx-auto opacity-30"></div>
+                    </div>
+
+                    <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 mb-24">
+                        {logos.map((logo, index) => (
+                            <div key={index} className="flex flex-col items-center logo-card">
+                                <div className="w-64 h-64 mb-6 flex items-center justify-center relative rounded-[2rem] bg-white shadow-[0_1px_2px_rgb(15_46_42_/_0.06),0_8px_24px_-12px_rgb(15_46_42_/_0.18)]">
+                                    <div className="logo-aura"></div>
+                                    <div className="w-32 h-32 relative z-10 logo-canvas" style={{ color: ink }}>
+                                        <logo.Component />
+                                    </div>
+                                </div>
+                                <div className="mb-8 flex h-9 w-9 items-center justify-center rounded-xl bg-[#00897b] text-[#f5faf7]" aria-hidden>
+                                    <div className="h-5 w-5"><logo.Component /></div>
+                                </div>
+                                <div className="text-center w-full px-4">
+                                    <h2 className="text-xl font-medium tracking-wider mb-2 uppercase">
+                                        {logo.title}
+                                    </h2>
+                                    <h3 className="text-xs font-mono opacity-50 tracking-widest mb-6">
+                                        {logo.subtitle}
+                                    </h3>
+                                    <p className="text-sm leading-relaxed opacity-70 text-left font-light text-balance">
+                                        {logo.philosophy}
+                                    </p>
+                                    <a href={logo.file} download className="mt-4 inline-block font-mono text-[11px] uppercase tracking-widest opacity-50 hover:opacity-100">
+                                        Descargar SVG
+                                    </a>
+                                </div>
+                                <div className="divider-line mt-8 mx-auto"></div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="mt-8 max-w-2xl text-center">
+                        <p className="font-mono text-xs opacity-40 uppercase tracking-ultra-wide leading-loose">
+                            Piquify · logo generator<br/>
+                            2026
+                        </p>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<LogoShowcase />, document.getElementById('root'));
+    </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Circuito de tablero: la esquina abierta es la salida. -->
+  <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M34 22 H70 a8 8 0 0 1 8 8 V70 a8 8 0 0 1 -8 8 H30 a8 8 0 0 1 -8 -8 V42"/>
+    <path d="M46 22 v8"/>
+    <path d="M58 22 v8"/>
+    <path d="M78 46 h-8"/>
+    <path d="M78 58 h-8"/>
+  </g>
+</svg>

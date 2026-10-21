@@ -1,0 +1,12 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="right">
+      <circle cx="62" cy="50" r="26"/>
+    </clipPath>
+  </defs>
+  <g fill="none" stroke="currentColor" stroke-width="3.5">
+    <circle cx="38" cy="50" r="26"/>
+    <circle cx="62" cy="50" r="26"/>
+  </g>
+  <circle cx="38" cy="50" r="26" fill="currentColor" clip-path="url(#right)"/>
+</svg>

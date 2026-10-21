@@ -23,7 +23,7 @@ export default async function AddFriendPage({
   const already = friends.some((item) => item.id === profile.id);
 
   return (
-    <main className="mx-auto max-w-lg px-5 pb-20 pt-8">
+    <main className="mx-auto max-w-lg px-4 pb-20 pt-8 sm:px-5">
       <h1 className="font-display text-3xl font-extrabold tracking-tight text-abismo">
         Añadir amigo
       </h1>

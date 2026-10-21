@@ -17,7 +17,7 @@ export default async function NewPiquePage({
   if (!playground || !playground.isAdmin) notFound();
 
   return (
-    <main className="mx-auto max-w-[1240px] px-5 pb-20 pt-6">
+    <main className="mx-auto max-w-[1240px] px-4 pb-20 pt-6 sm:px-5">
       <Link
         href={`/playgrounds/${playground.id}`}
         className="mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-tinta-suave transition-colors hover:text-marea"

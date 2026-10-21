@@ -7,7 +7,7 @@ export default function AppError({
   reset: () => void;
 }) {
   return (
-    <main className="mx-auto max-w-lg px-5 py-20 text-center">
+    <main className="mx-auto max-w-lg px-4 py-20 text-center sm:px-5">
       <h1 className="font-display text-3xl font-extrabold text-abismo">No se ha podido cargar</h1>
       <p className="mt-2 text-sm text-tinta-suave">
         Ha fallado la conexión con tus datos. Puedes intentarlo otra vez.

@@ -5,11 +5,12 @@ obsoleto en lugar de acumular un diario.
 
 ## Actualizado
 
-15 de octubre de 2026.
+21 de octubre de 2026.
 
 ## Objetivo actual
 
-Vigilar el primer deploy y conectar GitHub a Vercel.
+Ajustar la versión móvil: navbar compacto (logo abre sidebar, puntos a la derecha)
+y contenido encuadrado.
 
 ## Decisiones vigentes
 
@@ -37,13 +38,15 @@ Vigilar el primer deploy y conectar GitHub a Vercel.
   pique funcionan. Rollback: Instant Rollback en Vercel.
 - Auth sigue en `riukifewvizgdlqtfakn`. Conviene poner Site URL y Redirect URLs
   a `https://piquify.vercel.app`.
-- Vercel no está conectado a GitHub (falta Login Connection). Los deploys van
-  por CLI hasta que se enlace.
+- Vercel (`www-pablo/piquify`) está enlazado a `wPabloR/piquify`. La rama de
+  producción es `main` y los deploys desde Git están activos. El ajuste móvil
+  es el primer push posterior al enlace.
 - Humo: cuenta `@smokeprod15`, playground `Smoke Prod` código `4576867c`.
 
 ## Próximo paso
 
-Conectar el repo GitHub al proyecto Vercel y fijar Site URL en Auth.
+Fijar Site URL y Redirect URLs de Auth en `https://piquify.vercel.app`.
+Comprobar que el deploy de este push queda en producción.
 
 ## Pendiente de decidir
 

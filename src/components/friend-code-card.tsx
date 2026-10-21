@@ -18,7 +18,7 @@ export function FriendCodeCard({ code }: { code: string }) {
       <p className="mt-1 text-sm text-tinta-suave">
         Compártelo para que te agreguen como amigo.
       </p>
-      <p className="mt-3 font-mono text-2xl font-bold tracking-[0.2em] text-abismo">{code}</p>
+      <p className="mt-3 break-all font-mono text-xl font-bold tracking-[0.12em] text-abismo sm:text-2xl sm:tracking-[0.2em]">{code}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         <button
           type="button"

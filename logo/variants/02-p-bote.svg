@@ -1,0 +1,7 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Letter P: the counter is the pot. Stem + bowl, generous void. -->
+  <path
+    fill="currentColor"
+    d="M34 20c0-3.3 2.7-6 6-6h14c14.4 0 26 11.6 26 26S68.4 66 54 66H46v16c0 3.3-2.7 6-6 6s-6-2.7-6-6V20zm12 34h8c7.7 0 14-6.3 14-14S61.7 26 54 26h-8v28z"
+  />
+</svg>

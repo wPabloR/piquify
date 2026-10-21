@@ -1,0 +1,10 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="right-bias">
+      <circle cx="61" cy="52" r="22"/>
+    </clipPath>
+  </defs>
+  <circle cx="42" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="3.5"/>
+  <circle cx="61" cy="52" r="22" fill="none" stroke="currentColor" stroke-width="3.5"/>
+  <circle cx="42" cy="50" r="28" fill="currentColor" clip-path="url(#right-bias)"/>
+</svg>

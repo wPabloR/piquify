@@ -17,7 +17,7 @@ export default async function ProfilePage() {
   ]);
 
   return (
-    <main className="mx-auto flex max-w-lg flex-col gap-5 px-5 pb-20 pt-8">
+    <main className="mx-auto flex max-w-lg flex-col gap-5 px-4 pb-20 pt-8 sm:px-5">
       <div>
         <h1 className="font-display text-3xl font-extrabold tracking-tight text-abismo">Tu perfil</h1>
         <p className="mt-1 text-sm text-tinta-suave">

@@ -34,11 +34,11 @@ export function PiqueCard({
   return (
     <article
       id={`pique-${pique.id}`}
-      className="flex h-full flex-col rounded-2xl border border-abismo/10 bg-white p-5 shadow-card"
+      className="flex h-full flex-col rounded-2xl border border-abismo/10 bg-white p-4 shadow-card sm:p-5"
     >
       <div className="mb-3 flex items-start gap-3">
         <div className="min-w-0 flex-1">
-          <h3 className="font-display text-lg font-bold leading-snug text-abismo">{pique.question}</h3>
+          <h3 className="break-words font-display text-lg font-bold leading-snug text-abismo">{pique.question}</h3>
           {pique.detail && <p className="mt-1 text-sm text-tinta-suave">{pique.detail}</p>}
         </div>
         <Status pique={pique} />

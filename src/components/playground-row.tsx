@@ -7,7 +7,7 @@ export function PlaygroundRow({ playground }: { playground: PlaygroundSummary })
   return (
     <Link
       href={`/playgrounds/${playground.id}`}
-      className="group flex items-center gap-4 rounded-2xl border border-abismo/10 bg-white px-4 py-3.5 transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-laguna hover:shadow-card"
+      className="group flex items-center gap-3 rounded-2xl border border-abismo/10 bg-white px-3.5 py-3.5 transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-laguna hover:shadow-card sm:gap-4 sm:px-4"
     >
       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-arena/60 text-xl" aria-hidden>
         {playground.emoji}
